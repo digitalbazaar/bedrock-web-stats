@@ -10,8 +10,10 @@
         Get Stats
       </q-btn>
     </div>
-    <div style="min-height: 400px">
-      <div id="chart" />
+    <div>
+      <canvas
+        id="my-chart"
+        height="100" />
     </div>
     <div>
       <pre>
@@ -26,8 +28,8 @@
  */
 'use strict';
 
-// FIXME: c3 is loaded as a global in index.js as a hack
-/* globals c3 */
+// FIXME: chartjs is loaded as a global in index.js as a hack
+/* globals Chart */
 
 import {StatsService} from 'bedrock-web-stats';
 
@@ -44,60 +46,62 @@ export default {
   },
   methods: {
     async getStats() {
-      const timestamps = ['x'];
-      const series1 = ['avgload'];
+      const labels = [];
+      const series1 = [];
       const result = await this._statsService.get({
         // specify which monitors to pull
         monitorIds: ['os'],
         // get stats from the last 5 seconds
-        startDate: Date.now() - 50000
+        startDate: Date.now() - 100000
       });
       for(const r of result) {
-        timestamps.push(r.createdDate);
+        labels.push(r.createdDate);
         series1.push(r.monitors.os.currentLoad.avgload);
       }
-      const myChart = c3.generate({
+
+      const ctx = document.getElementById('my-chart');
+      const myChart = new Chart(ctx, {
+        type: 'line',
         data: {
-          x: 'x',
-          columns: [
-            timestamps,
-            series1,
-          ],
-          // type: 'spline'
+          labels,
+          datasets: [{
+            label: 'loadavg',
+            data: series1
+          }]
         },
-        zoom: {
-          enabled: true
-        },
-        axis: {
-          y: {
-            min: 0,
-            max: 1,
-            label: 'avgload',
-          },
-          x: {
-            type: 'timeseries',
-            tick: {
-              fit: true,
-              rotate: 45,
-              format: '%Y-%m-%d %H:%M:%S'
-            }
+        options: {
+          scales: {
+            xAxes: [{
+              type: 'time',
+              time: {
+                unit: 'minute'
+              }
+            }],
+            yAxes: [{
+              ticks: {
+                beginAtZero: true,
+                max: 1,
+              }
+            }]
           }
         }
       });
-      let lastTime = timestamps[timestamps.length - 1];
+
+      // for chartjs, just mutate the dataset and call .update()
+      let lastTime = labels[labels.length - 1];
       setInterval(async () => {
-        const timestamps = ['x'];
-        const series1 = ['avgload'];
         const result = await this._statsService.get({
           monitorIds: ['os'],
           startDate: lastTime + 1
         });
         for(const r of result) {
-          timestamps.push(r.createdDate);
+          labels.push(r.createdDate);
           series1.push(r.monitors.os.currentLoad.avgload);
         }
-        lastTime = timestamps[timestamps.length - 1];
-        myChart.flow({columns: [timestamps, series1]});
+        lastTime = labels[labels.length - 1];
+        labels.splice(0, result.length);
+        series1.splice(0, result.length);
+        myChart.update();
       }, 1000);
       // this.reports = result;
     },

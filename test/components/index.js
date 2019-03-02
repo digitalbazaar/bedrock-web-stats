@@ -20,21 +20,18 @@ brVue.setRootVue(async () => {
     Quasar,
     {default: iconSet},
     {default: Vuelidate},
-    d3,
-    c3,
+    chartjs,
   ] = await Promise.all([
     import('bedrock-quasar'),
     import('quasar-framework'),
     import('quasar-framework/icons/fontawesome'),
     import('vuelidate'),
-    // import ('https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.12/c3.min.js')
-    import('https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.1/d3.js'),
-    import('https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.12/c3.js'),
+    // The bundle includes moment.js and possibly other deps required by chartjs
+    import('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js'),
   ]);
 
   // FIXME: this is a hack, do not use in production code
-  window.d3 = d3;
-  window.c3 = c3;
+  window.Chart = chartjs;
 
   // replace default `br-root` with a custom one
   Vue.component('br-root', () => import('./BrRoot.vue'));

@@ -4,5 +4,8 @@ module.exports = {
   },
   extends: [
     'eslint-config-digitalbazaar/vue'
-  ]
+  ],
+  parserOptions: {
+      ecmaVersion: 2017
+  }
 };

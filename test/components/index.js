@@ -29,6 +29,9 @@ brVue.setRootVue(async () => {
     import ('https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.12/c3.min.js')
   ]);
 
+  // FIXME: this is a hack, do not use in production code
+  window.c3 = c3;
+
   // replace default `br-root` with a custom one
   Vue.component('br-root', () => import('./BrRoot.vue'));
 

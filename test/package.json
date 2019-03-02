@@ -1,0 +1,63 @@
+{
+  "name": "bedrock-web-stats-test",
+  "version": "0.0.1-0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "redis-cli flushall && node --preserve-symlinks test.js",
+    "test": "redis-cli flushall && node --preserve-symlinks test.js test --framework karma",
+    "postinstall": "node --preserve-symlinks test.js compile-less"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.3.1",
+    "bedrock": "^1.0.0",
+    "bedrock-account": "^2.1.1",
+    "bedrock-did-client": "^1.1.2",
+    "bedrock-express": "^2.0.6",
+    "bedrock-identity": "^6.1.0",
+    "bedrock-jobs": "github:digitalbazaar/bedrock-jobs#3.x",
+    "bedrock-karma": "^1.0.0",
+    "bedrock-key": "^5.1.2",
+    "bedrock-mongodb": "^5.5.0",
+    "bedrock-passport": "^4.0.4",
+    "bedrock-permission": "^2.5.3",
+    "bedrock-quasar": "^1.0.0",
+    "bedrock-redis": "^3.4.0",
+    "bedrock-server": "^2.2.0",
+    "bedrock-stats": "github:digitalbazaar/bedrock-stats#initial",
+    "bedrock-stats-http": "github:digitalbazaar/bedrock-stats-http#initial",
+    "bedrock-stats-monitor-os": "github:digitalbazaar/bedrock-stats-monitor-os#initial",
+    "bedrock-stats-storage-redis": "github:digitalbazaar/bedrock-stats-storage-redis#initial",
+    "bedrock-test": "^2.0.0",
+    "bedrock-validation": "^4.1.0",
+    "bedrock-views": "^6.0.0",
+    "bedrock-vue": "^1.0.0",
+    "bedrock-web": "^1.0.0",
+    "bedrock-web-stats": "file:..",
+    "bedrock-webpack": "^2.0.0",
+    "vue": "^2.5.16",
+    "vue-router": "^3.0.1",
+    "vuelidate": "^0.7.4"
+  },
+  "bedrock": {
+    "browserDependencies": [
+      "@fortawesome/fontawesome-free",
+      "bedrock-quasar",
+      "bedrock-vue",
+      "bedrock-web-stats",
+      "vue",
+      "vue-router",
+      "vuelidate"
+    ],
+    "manifest": {
+      "@fortawesome/fontawesome-free": {
+        "main": null,
+        "less": [
+          "less/fontawesome.less",
+          "less/regular.less",
+          "less/solid.less"
+        ]
+      }
+    }
+  }
+}

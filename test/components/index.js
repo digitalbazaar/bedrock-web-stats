@@ -19,12 +19,14 @@ brVue.setRootVue(async () => {
     brQuasar,
     Quasar,
     {default: iconSet},
-    {default: Vuelidate}
+    {default: Vuelidate},
+    c3
   ] = await Promise.all([
     import('bedrock-quasar'),
     import('quasar-framework'),
     import('quasar-framework/icons/fontawesome'),
-    import('vuelidate')
+    import('vuelidate'),
+    import ('https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.12/c3.min.js')
   ]);
 
   // replace default `br-root` with a custom one

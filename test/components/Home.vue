@@ -39,7 +39,9 @@ export default {
   methods: {
     async getStats() {
       const result = await this._statsService.get({
+        // specify which monitors to pull
         monitorIds: ['os'],
+        // get stats from the last 5 seconds
         startDate: Date.now() - 5000
       });
       this.reports = result;

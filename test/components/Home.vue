@@ -13,7 +13,7 @@
     <div>
       <canvas
         id="my-chart"
-        height="100" />
+        height="50" />
     </div>
     <div>
       <pre>
@@ -66,7 +66,8 @@ export default {
           labels,
           datasets: [{
             label: 'loadavg',
-            data: series1
+            data: series1,
+            pointRadius: 0,
           }]
         },
         options: {

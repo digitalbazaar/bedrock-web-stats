@@ -46,8 +46,8 @@ export default {
   },
   methods: {
     async getStats() {
-      const labels = [];
-      const series1 = [];
+      let labels = [];
+      let series1 = [];
       const result = await this._statsService.get({
         // specify which monitors to pull
         monitorIds: ['os'],
@@ -55,53 +55,37 @@ export default {
         startDate: Date.now() - 100000
       });
       for(const r of result) {
-        labels.push(r.createdDate);
-        series1.push(r.monitors.os.currentLoad.avgload);
+        labels = r.monitors.os.fsSize.map(f => f.fs);
+        series1 = r.monitors.os.fsSize.map(f => f.used);
       }
 
       const ctx = document.getElementById('my-chart');
       const myChart = new Chart(ctx, {
-        type: 'line',
+        type: 'pie',
         data: {
           labels,
           datasets: [{
-            label: 'loadavg',
+            backgroundColor: ['red', 'blue'],
             data: series1,
             pointRadius: 0,
           }]
         },
-        options: {
-          scales: {
-            xAxes: [{
-              type: 'time',
-              time: {
-                unit: 'minute'
-              }
-            }],
-            yAxes: [{
-              ticks: {
-                beginAtZero: true,
-                max: 1,
-              }
-            }]
-          }
-        }
+        options: {}
       });
 
       // for chartjs, just mutate the dataset and call .update()
-      let lastTime = labels[labels.length - 1];
+      let lastTime = result[result.length - 1].createdDate;
       setInterval(async () => {
         const result = await this._statsService.get({
           monitorIds: ['os'],
           startDate: lastTime + 1
         });
+        console.log('result', result);
         for(const r of result) {
-          labels.push(r.createdDate);
-          series1.push(r.monitors.os.currentLoad.avgload);
+          labels = r.monitors.os.fsSize.map(f => f.fs);
+          series1 = r.monitors.os.fsSize.map(f => f.used);
         }
-        lastTime = labels[labels.length - 1];
-        labels.splice(0, result.length);
-        series1.splice(0, result.length);
+        lastTime = result[result.length - 1].createdDate;
         myChart.update();
       }, 1000);
       // this.reports = result;

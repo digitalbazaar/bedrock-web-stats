@@ -80,7 +80,9 @@ export default {
           monitorIds: ['os'],
           startDate: lastTime + 1
         });
-        console.log('result', result);
+        if(!result.length) {
+          return false;
+        }
         for(const r of result) {
           labels = r.monitors.os.fsSize.map(f => f.fs);
           series1 = r.monitors.os.fsSize.map(f => f.used);

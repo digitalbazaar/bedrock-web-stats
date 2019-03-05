@@ -4,8 +4,20 @@
     padding>
     <time-series
       id="load-avg"
-      :series="reports"
+      :series="loadavg"
       label="Load Average" />
+    <time-series
+      id="mem-used"
+      line="green"
+      fill="red"
+      :series="memused"
+      label="Memory Used" />
+    <time-series
+      id="fs-used"
+      line="purple"
+      fill="grey"
+      :series="fssize"
+      label="Hard Drive Usage" />
   </q-page>
 </template>
 <script>
@@ -23,7 +35,9 @@ export default {
   components: {TimeSeries},
   data() {
     return {
-      reports: [],
+      loadavg: [],
+      memused: [],
+      fssize: []
     };
   },
   beforeCreate() {
@@ -34,9 +48,16 @@ export default {
   },
   methods: {
     subscriber(results) {
-      const labelValues = results.map(r => (
+      const loadAvg = results.map(r => (
         {x: r.createdDate, y: r.monitors.os.currentLoad.avgload}));
-      this.$set(this, 'reports', labelValues);
+      this.$set(this, 'loadavg', loadAvg);
+      const memUsed = results.map(r => (
+        {x: r.createdDate, y: r.monitors.os.mem.used}));
+      this.$set(this, 'memused', memUsed);
+      const fsSize = results.map(r => (
+        {x: r.createdDate,
+          y: r.monitors.os.fsSize.reduce((acc, cur) => acc + cur.used, 0)}));
+      this.$set(this, 'fssize', fsSize);
     }
   }
 };

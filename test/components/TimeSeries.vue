@@ -57,12 +57,6 @@ export default {
               unit: 'second'
             }
           }],
-          yAxes: [{
-            ticks: {
-              beginAtZero: true,
-              max: 1,
-            }
-          }]
         }
       })
     }
@@ -86,7 +80,7 @@ export default {
   watch: {
     series() {
       this.chart.data.datasets[0].data = this.series;
-      this.chart.update();
+      this.chart.update(10);
     }
   },
   mounted() {

@@ -15,7 +15,6 @@
 'use strict';
 
 // FIXME: chartjs is loaded as a global in index.js as a hack
-
 import {StatsService} from 'bedrock-web-stats';
 import TimeSeries from './TimeSeries.vue';
 

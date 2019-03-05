@@ -14,8 +14,6 @@
 
 <script>
 /* globals Chart */
-import 'chartjs-plugin-responsive-downsample';
-
 export default {
   Name: 'Chart',
   props: {
@@ -38,34 +36,13 @@ export default {
     series: {
       type: Array,
       required: true,
+      default: () => {
+        return [];
+      }
     },
     options: {
       type: Object,
       default: () => ({
-        responsiveDownsample: {
-          enabled: false,
-          /**
-           * Choose aggregation algorithm 'AVG'(Average values) or
-           * 'LTTB' (Largest-Triangle-Three-Buckets). Default: 'LTTB'
-           */
-          aggregationAlgorithm: 'LTTB',
-          /**
-           * The desired minimal distance between data points in pixels.
-           * The plugin downsamples the data and tries to match this threshold.
-           * Default: 1 pixel
-           */
-          desiredDataPointDistance: 1,
-          /**
-            * The minimal number of data points.
-            * The chart data is not downsampled further than
-            * this threshold. Default: 100
-           */
-          minNumPoints: 100,
-          /**
-           * Cull data to displayed range of x scale. Default: true
-          */
-          cullData: true
-        },
         scales: {
           xAxes: [{
             type: 'time',

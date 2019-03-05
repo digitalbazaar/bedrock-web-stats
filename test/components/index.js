@@ -32,7 +32,6 @@ brVue.setRootVue(async () => {
 
   // FIXME: this is a hack, do not use in production code
   window.Chart = chartjs;
-
   // replace default `br-root` with a custom one
   Vue.component('br-root', () => import('./BrRoot.vue'));
 

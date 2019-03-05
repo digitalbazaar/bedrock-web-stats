@@ -7,6 +7,11 @@ import axios from 'axios';
 
 const headers = {Accept: 'application/ld+json, application/json'};
 
+/**
+ * Stats Service is a singleton
+ * locked to poll the stats api every second.
+ * It is stored in window.bedrock.statsService
+ */
 export class StatsService {
   constructor() {
     if(!window.bedrock) {
@@ -17,21 +22,25 @@ export class StatsService {
       console.log('existing service found');
       return window.bedrock.statsService;
     }
-    this.initialize.bind(this);
-    this.update.bind(this);
-    this.get.bind(this);
     this.initialize();
     window.bedrock.statsService = this;
     return window.bedrock.statsService;
   }
+  /**
+   * sets up the singleton to pull every second
+   */
   initialize() {
     if(this.interval) {
       return;
     }
     this.subscribers = [];
     this.results = [];
-    this.interval = setInterval(() => this.update(), 1000);
+    this.intervalId = setInterval(() => this.update(), 1000);
   }
+  /**
+   * awaits the result every second
+   * concats it to the current result then updates the subscribers
+   */
   async update() {
     const result = await this.get({
       monitorIds: ['os'],
@@ -50,6 +59,9 @@ export class StatsService {
     const result = await axios.get('/stats/storage/redis', {headers, params});
     return result.data;
   }
+  /**
+   * gets the last time or returns a time 10000 ms from now
+   */
   get lastTime() {
     if(!this.results.length) {
       return Date.now() - 100000;

@@ -14,6 +14,7 @@
 
 <script>
 /* globals Chart */
+
 export default {
   Name: 'Chart',
   props: {
@@ -46,6 +47,12 @@ export default {
         scales: {
           xAxes: [{
             type: 'time',
+            distribution: 'series',
+            ticks: {
+              source: 'auto',
+              max: 5,
+              maxTicksLimit: 10,
+            },
             time: {
               unit: 'second'
             }
@@ -74,18 +81,11 @@ export default {
   computed: {
     times() {
       return this.units.map(u => ({label: u, value: u}));
-    },
-    x() {
-      return this.series.map(s => s.label);
-    },
-    y() {
-      return this.series.map(s => s.value);
     }
   },
   watch: {
     series() {
-      this.chart.data.labels = this.x;
-      this.chart.data.datasets[0].data = this.y;
+      this.chart.data.datasets[0].data = this.series;
       this.chart.update();
     }
   },
@@ -94,10 +94,9 @@ export default {
     const myChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: this.x,
         datasets: [{
           label: this.label,
-          data: this.y,
+          data: this.series,
           borderColor: this.line,
           backgroundColor: this.fill,
           pointRadius: 1,
@@ -109,9 +108,9 @@ export default {
   },
   methods: {
     changeTime() {
-      this.chart.options.scales.xAxes[0].time.unit = this.timeUnit;
+      const [data] = this.chart.options.scales.xAxes;
+      data.time.unit = this.timeUnit;
       this.chart.update();
-      console.log('time unit', this.timeUnit);
     }
   }
 };

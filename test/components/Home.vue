@@ -35,7 +35,7 @@ export default {
   methods: {
     subscriber(results) {
       const labelValues = results.map(r => (
-        {label: r.createdDate, value: r.monitors.os.currentLoad.avgload}));
+        {x: r.createdDate, y: r.monitors.os.currentLoad.avgload}));
       this.$set(this, 'reports', labelValues);
     }
   }

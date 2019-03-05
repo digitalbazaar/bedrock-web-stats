@@ -13,7 +13,7 @@ config.paths.cache = path.join(__dirname, '.cache');
 
 const cfg = config['stats'];
 // generate reports at this interval in ms
-cfg.report.interval = 1000;
+cfg.report.interval = 100;
 cfg.storage.push({name: 'redis'});
 
 // add pseudo packages

@@ -22,6 +22,7 @@ export class StatsService {
       console.log('existing service found');
       return window.bedrock.statsService;
     }
+    this.update.bind(this);
     this.initialize();
     window.bedrock.statsService = this;
     return window.bedrock.statsService;

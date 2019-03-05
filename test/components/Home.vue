@@ -5,7 +5,6 @@
     <time-series
       id="load-avg"
       :series="reports"
-      :length="reports.length"
       label="Load Average" />
   </q-page>
 </template>

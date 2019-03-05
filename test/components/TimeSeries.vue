@@ -1,5 +1,5 @@
 <template>
-  <div @click="log()">
+  <div @click="changeTime()">
     <canvas
       :id="id"
       height="50" />
@@ -12,27 +12,50 @@
 export default {
   Name: 'Chart',
   props: {
-    length: {
-      type: Number,
-      default: 0
-    },
     id: {
       type: String,
-      required: true,
       default: () => `chart-${Date.now()}`
     },
     label: {
       type: String,
       default: () => 'Label'
     },
+    line: {
+      type: String,
+      default: () => 'red'
+    },
+    fill: {
+      type: String,
+      default: () => 'blue'
+    },
     series: {
       type: Array,
       required: true,
+    },
+    options: {
+      type: Object,
+      default: () => ({
+        scales: {
+          xAxes: [{
+            type: 'time',
+            time: {
+              unit: 'second'
+            }
+          }],
+          yAxes: [{
+            ticks: {
+              beginAtZero: true,
+              max: 1,
+            }
+          }]
+        }
+      })
     }
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      timeUnit: 'second'
     };
   },
   computed: {
@@ -52,7 +75,6 @@ export default {
   },
   mounted() {
     const ctx = document.getElementById(this.id);
-    console.log('x', this.x, 'y', this.y);
     const myChart = new Chart(ctx, {
       type: 'line',
       data: {
@@ -60,27 +82,27 @@ export default {
         datasets: [{
           label: this.label,
           data: this.y,
-          pointRadius: 0,
+          borderColor: this.line,
+          backgroundColor: this.fill,
+          pointRadius: 1,
         }]
       },
-      options: {
-        scales: {
-          xAxes: [{
-            type: 'time',
-            time: {
-              unit: 'minute'
-            }
-          }],
-          yAxes: [{
-            ticks: {
-              beginAtZero: true,
-              max: 1,
-            }
-          }]
-        }
-      }
+      options: this.options
     });
     this.chart = myChart;
+  },
+  methods: {
+    changeTime() {
+      const units = [
+        'millisecond', 'second', 'minute',
+        'hour', 'day', 'week', 'month',
+        'quarter', 'year'
+      ];
+      const index = units.indexOf(this.timeUnit) + 1;
+      this.timeUnit = index === units.length ? units[0] : units[index];
+      this.chart.options.scales.xAxes[0].time.unit = this.timeUnit;
+      this.chart.update();
+    }
   }
 };
 </script>

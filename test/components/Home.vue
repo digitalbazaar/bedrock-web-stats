@@ -2,23 +2,10 @@
   <q-page
     class="column gutter-md background"
     padding>
-    <div class="column items-center">
-      <q-btn
-        id="submit-btn"
-        color="faded"
-        @click="getStats">
-        Get Stats
-      </q-btn>
-    </div>
     <div>
       <canvas
         id="my-chart"
         height="50" />
-    </div>
-    <div>
-      <pre>
-        {{reports}}
-      </pre>
     </div>
   </q-page>
 </template>
@@ -38,73 +25,59 @@ export default {
   components: {},
   data() {
     return {
-      reports: []
+      reports: [],
+      chart: null
     };
+  },
+  computed: {
+    labels() {
+      return this.reports.map(r => r.createdDate);
+    },
+    loadAvg() {
+      return this.reports.map(r => r.monitors.os.currentLoad.avgload);
+    }
   },
   beforeCreate() {
     this._statsService = new StatsService();
   },
-  methods: {
-    async getStats() {
-      const labels = [];
-      const series1 = [];
-      const result = await this._statsService.get({
-        // specify which monitors to pull
-        monitorIds: ['os'],
-        // get stats from the last 5 seconds
-        startDate: Date.now() - 100000
-      });
-      for(const r of result) {
-        labels.push(r.createdDate);
-        series1.push(r.monitors.os.currentLoad.avgload);
-      }
-
-      const ctx = document.getElementById('my-chart');
-      const myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            label: 'loadavg',
-            data: series1,
-            pointRadius: 0,
+  mounted() {
+    const ctx = document.getElementById('my-chart');
+    const myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: this.labels,
+        datasets: [{
+          label: 'loadavg',
+          data: this.loadAvg,
+          pointRadius: 0,
+        }]
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            type: 'time',
+            time: {
+              unit: 'minute'
+            }
+          }],
+          yAxes: [{
+            ticks: {
+              beginAtZero: true,
+              max: 1,
+            }
           }]
-        },
-        options: {
-          scales: {
-            xAxes: [{
-              type: 'time',
-              time: {
-                unit: 'minute'
-              }
-            }],
-            yAxes: [{
-              ticks: {
-                beginAtZero: true,
-                max: 1,
-              }
-            }]
-          }
         }
-      });
-
-      // for chartjs, just mutate the dataset and call .update()
-      let lastTime = labels[labels.length - 1];
-      setInterval(async () => {
-        const result = await this._statsService.get({
-          monitorIds: ['os'],
-          startDate: lastTime + 1
-        });
-        for(const r of result) {
-          labels.push(r.createdDate);
-          series1.push(r.monitors.os.currentLoad.avgload);
-        }
-        lastTime = labels[labels.length - 1];
-        labels.splice(0, result.length);
-        series1.splice(0, result.length);
-        myChart.update();
-      }, 1000);
-      // this.reports = result;
+      }
+    });
+    this.chart = myChart;
+    this._statsService.subscribe({id: 'loadavg', updater: this.update});
+  },
+  methods: {
+    update(results) {
+      this.reports = results;
+      this.chart.data.labels = this.labels;
+      this.chart.data.datasets[0].data = this.loadAvg;
+      this.chart.update();
     },
     done() {
       console.log('Done!', this.form);

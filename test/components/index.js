@@ -27,7 +27,7 @@ brVue.setRootVue(async () => {
     import('quasar-framework/icons/fontawesome'),
     import('vuelidate'),
     // The bundle includes moment.js and possibly other deps required by chartjs
-    import('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js'),
+    import('https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js')
   ]);
 
   // FIXME: this is a hack, do not use in production code

@@ -1,5 +1,11 @@
 <template>
-  <div @click="changeTime()">
+  <div>
+    <div class="q-m-a-lg q-p-a-lg">
+      <q-select
+        v-model="timeUnit"
+        :options="times"
+        @input="changeTime()" />
+    </div>
     <canvas
       :id="id"
       height="50" />
@@ -8,6 +14,7 @@
 
 <script>
 /* globals Chart */
+import 'chartjs-plugin-responsive-downsample';
 
 export default {
   Name: 'Chart',
@@ -35,6 +42,30 @@ export default {
     options: {
       type: Object,
       default: () => ({
+        responsiveDownsample: {
+          enabled: false,
+          /**
+           * Choose aggregation algorithm 'AVG'(Average values) or
+           * 'LTTB' (Largest-Triangle-Three-Buckets). Default: 'LTTB'
+           */
+          aggregationAlgorithm: 'LTTB',
+          /**
+           * The desired minimal distance between data points in pixels.
+           * The plugin downsamples the data and tries to match this threshold.
+           * Default: 1 pixel
+           */
+          desiredDataPointDistance: 1,
+          /**
+            * The minimal number of data points.
+            * The chart data is not downsampled further than
+            * this threshold. Default: 100
+           */
+          minNumPoints: 100,
+          /**
+           * Cull data to displayed range of x scale. Default: true
+          */
+          cullData: true
+        },
         scales: {
           xAxes: [{
             type: 'time',
@@ -55,10 +86,18 @@ export default {
   data() {
     return {
       chart: null,
-      timeUnit: 'second'
+      timeUnit: 'second',
+      units: [
+        'millisecond', 'second', 'minute',
+        'hour', 'day', 'week', 'month',
+        'quarter', 'year'
+      ]
     };
   },
   computed: {
+    times() {
+      return this.units.map(u => ({label: u, value: u}));
+    },
     x() {
       return this.series.map(s => s.label);
     },
@@ -93,15 +132,9 @@ export default {
   },
   methods: {
     changeTime() {
-      const units = [
-        'millisecond', 'second', 'minute',
-        'hour', 'day', 'week', 'month',
-        'quarter', 'year'
-      ];
-      const index = units.indexOf(this.timeUnit) + 1;
-      this.timeUnit = index === units.length ? units[0] : units[index];
       this.chart.options.scales.xAxes[0].time.unit = this.timeUnit;
       this.chart.update();
+      console.log('time unit', this.timeUnit);
     }
   }
 };

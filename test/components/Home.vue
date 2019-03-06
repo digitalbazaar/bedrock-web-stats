@@ -7,36 +7,36 @@
         <gauge
           title="CPU"
           :colors="loadDisplay"
-          :last="lastCPU" />
+          :last="charts.lastCPU" />
       </span>
       <span>
         <gauge
           title="RAM"
           :colors="memDisplay"
-          :last="lastRAM" />
+          :last="charts.lastRAM" />
       </span>
       <span>
         <gauge
           title="Disk Space"
           :colors="fsDisplay"
-          :last="lastDISK" />
+          :last="charts.lastDISK" />
       </span>
     </div>
     <time-series
       id="load-avg"
-      :series="loadavg"
+      :series="charts.loadavg"
       label="Load Average" />
     <time-series
       id="mem-used"
       line="green"
       fill="red"
-      :series="memused"
+      :series="charts.memused"
       label="Memory Used" />
     <time-series
       id="fs-used"
       line="purple"
       fill="grey"
-      :series="fssize"
+      :series="charts.fssize"
       label="Hard Drive Usage" />
   </q-page>
 </template>
@@ -56,12 +56,7 @@ export default {
   components: {TimeSeries, Gauge},
   data() {
     return {
-      loadavg: [],
-      memused: [],
-      fssize: [],
-      lastRAM: 0.5,
-      lastCPU: 0.5,
-      lastDISK: 0.5,
+      charts: {},
       loadDisplay: ['rgba(255,0,100)', 'rgba(10, 255, 255)'],
       memDisplay: ['rgba(5,255,100)', 'rgba(100, 25, 255)'],
       fsDisplay: ['rgba(155,5,100)', 'rgba(100, 155, 255)']
@@ -71,31 +66,28 @@ export default {
     this._statsService = new StatsService();
   },
   mounted() {
-    this._statsService.subscribe({id: 'loadavg', updater: this.subscriber});
+    this._statsService.subscribe({id: 'demo', updater: this.subscriber});
   },
   methods: {
     subscriber(latest) {
       if(!latest.length) {
         return false;
       }
-      const loadAvg = latest.map(r => (
+      const charts = {};
+      charts.loadavg = latest.map(r => (
         {x: r.createdDate, y: r.monitors.os.currentLoad.avgload}));
-      this.$set(this, 'loadavg', loadAvg);
-      const memUsed = latest.map(r => (
+      charts.memused = latest.map(r => (
         {x: r.createdDate, y: r.monitors.os.mem.used}));
-      this.$set(this, 'memused', memUsed);
-      const fsSize = latest.map(r => (
+      charts.fssize = latest.map(r => (
         {x: r.createdDate,
           y: r.monitors.os.fsSize.reduce((acc, cur) => acc + cur.used, 0)}));
-      this.$set(this, 'fssize', fsSize);
       const last = latest[latest.length - 1];
-      const lastCPU = last.monitors.os.currentLoad.avgload;
-      this.$set(this, 'lastCPU', lastCPU);
-      const lastRAM =
+      charts.lastCPU = last.monitors.os.currentLoad.avgload;
+      charts.lastRAM =
         last.monitors.os.mem.active / last.monitors.os.mem.available;
-      this.$set(this, 'lastRAM', lastRAM);
-      const lastDISK = 0.4;
-      this.$set(this, 'lastDISK', lastDISK);
+      charts.lastDISK =
+        last.monitors.os.fsSize[0].used / last.monitors.os.fsSize[0].size;
+      this.$set(this, 'charts', charts);
     }
   }
 };

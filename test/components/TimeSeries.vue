@@ -7,13 +7,14 @@
         @input="changeTime()" />
     </div>
     <canvas
-      :id="id"
+      ref="canvas"
       height="50" />
   </div>
 </template>
 
 <script>
 /* globals Chart */
+import debounce from 'lodash/debounce';
 
 export default {
   Name: 'Chart',
@@ -57,6 +58,9 @@ export default {
               unit: 'second'
             }
           }],
+        },
+        animation: {
+          duration: 30
         }
       })
     }
@@ -78,14 +82,13 @@ export default {
     }
   },
   watch: {
-    series() {
-      this.chart.data.datasets[0].data = this.series;
-      this.chart.update(10);
+    series(newSeries) {
+      this.chart.data.datasets[0].data = newSeries;
+      this.chart.update();
     }
   },
   mounted() {
-    const ctx = document.getElementById(this.id);
-    const myChart = new Chart(ctx, {
+    const myChart = new Chart(this.$refs.canvas, {
       type: 'line',
       data: {
         datasets: [{
@@ -101,6 +104,10 @@ export default {
     this.chart = myChart;
   },
   methods: {
+    updateData: debounce(function(newSeries) {
+      this.chart.data.datasets[0].data = newSeries;
+      this.chart.update();
+    }, 60),
     changeTime() {
       const [data] = this.chart.options.scales.xAxes;
       data.time.unit = this.timeUnit;

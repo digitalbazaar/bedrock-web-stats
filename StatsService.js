@@ -48,7 +48,7 @@ export class StatsService {
       startDate: this.lastTime + 1
     });
     this.results = this.results.concat(result);
-    this.subscribers.forEach(s => s.updater(this.results));
+    this.subscribers.forEach(s => s.updater(this.results, result));
   }
   subscribe(update) {
     this.subscribers.push(update);

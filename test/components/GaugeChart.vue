@@ -51,7 +51,7 @@ export default {
         labels: this.display.labels,
         datasets: [{
           label: 'Gauge',
-          data: [25, 75],
+          data: [0.5, 0.5],
           backgroundColor: this.display.colors
         }]
       },

@@ -36,7 +36,6 @@ export default {
   },
   watch: {
     last(latest) {
-      console.log('latest', latest);
       if(!latest) {
         return false;
       }

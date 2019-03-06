@@ -46,7 +46,7 @@ export default {
           xAxes: [{
             type: 'realtime',
             time: {
-              unit: 'second'
+              unit: 'second',
             }
           }],
         },
@@ -69,7 +69,8 @@ export default {
   },
   computed: {
     times() {
-      return this.units.map(u => ({label: u, value: u}));
+      return this.units.map(
+        u => ({label: u, value: u})).slice(0, 3);
     }
   },
   watch: {
@@ -98,8 +99,8 @@ export default {
   },
   methods: {
     changeTime() {
-      const [data] = this.chart.options.scales.xAxes;
-      data.time.unit = this.timeUnit;
+      const [axis] = this.chart.options.scales.xAxes;
+      axis.time.unit = this.timeUnit;
       this.chart.update();
     }
   }

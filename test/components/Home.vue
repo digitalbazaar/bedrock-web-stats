@@ -74,7 +74,7 @@ export default {
     this._statsService.subscribe({id: 'loadavg', updater: this.subscriber});
   },
   methods: {
-    subscriber(results, latest) {
+    subscriber(latest) {
       if(!latest.length) {
         return false;
       }
@@ -91,7 +91,8 @@ export default {
       const last = latest[latest.length - 1];
       const lastCPU = last.monitors.os.currentLoad.avgload;
       this.$set(this, 'lastCPU', lastCPU);
-      const lastRAM = last.monitors.os.mem.active / last.monitors.os.mem.available;
+      const lastRAM =
+        last.monitors.os.mem.active / last.monitors.os.mem.available;
       this.$set(this, 'lastRAM', lastRAM);
       const lastDISK = 0.4;
       this.$set(this, 'lastDISK', lastDISK);

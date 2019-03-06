@@ -9,6 +9,9 @@
     <canvas
       ref="canvas"
       height="50" />
+    <span @click="pause">
+      pause
+    </span>
   </div>
 </template>
 
@@ -45,6 +48,9 @@ export default {
         scales: {
           xAxes: [{
             type: 'realtime',
+            realtime: {
+              pause: false
+            },
             time: {
               unit: 'second',
             }
@@ -58,6 +64,7 @@ export default {
   },
   data() {
     return {
+      paused: false,
       chart: null,
       timeUnit: 'second',
       units: [
@@ -98,6 +105,12 @@ export default {
     this.chart = myChart;
   },
   methods: {
+    pause() {
+      const [axis] = this.chart.options.scales.xAxes;
+      this.paused = !this.paused;
+      axis.realtime.pause = this.paused;
+      this.chart.update();
+    },
     changeTime() {
       const [axis] = this.chart.options.scales.xAxes;
       axis.time.unit = this.timeUnit;

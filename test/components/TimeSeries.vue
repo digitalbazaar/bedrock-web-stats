@@ -15,14 +15,12 @@
 <script>
 /* globals Chart */
 import debounce from 'lodash/debounce';
+import 'chart.js';
+import 'chartjs-plugin-streaming';
 
 export default {
   Name: 'Chart',
   props: {
-    id: {
-      type: String,
-      default: () => `chart-${Date.now()}`
-    },
     label: {
       type: String,
       default: () => 'Label'
@@ -47,21 +45,12 @@ export default {
       default: () => ({
         scales: {
           xAxes: [{
-            type: 'time',
-            distribution: 'series',
-            ticks: {
-              source: 'auto',
-              max: 5,
-              maxTicksLimit: 10,
-            },
+            type: 'realtime',
             time: {
               unit: 'second'
             }
           }],
         },
-        animation: {
-          duration: 30
-        }
       })
     }
   },
@@ -83,7 +72,7 @@ export default {
   },
   watch: {
     series(newSeries) {
-      this.chart.data.datasets[0].data = newSeries;
+      newSeries.forEach(s => this.chart.data.datasets[0].data.push(s));
       this.chart.update();
     }
   },

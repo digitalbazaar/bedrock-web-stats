@@ -47,14 +47,14 @@ export default {
     this._statsService.subscribe({id: 'loadavg', updater: this.subscriber});
   },
   methods: {
-    subscriber(results) {
-      const loadAvg = results.map(r => (
+    subscriber(results, latest) {
+      const loadAvg = latest.map(r => (
         {x: r.createdDate, y: r.monitors.os.currentLoad.avgload}));
       this.$set(this, 'loadavg', loadAvg);
-      const memUsed = results.map(r => (
+      const memUsed = latest.map(r => (
         {x: r.createdDate, y: r.monitors.os.mem.used}));
       this.$set(this, 'memused', memUsed);
-      const fsSize = results.map(r => (
+      const fsSize = latest.map(r => (
         {x: r.createdDate,
           y: r.monitors.os.fsSize.reduce((acc, cur) => acc + cur.used, 0)}));
       this.$set(this, 'fssize', fsSize);

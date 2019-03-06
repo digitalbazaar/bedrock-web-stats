@@ -41,7 +41,7 @@ export default {
         return false;
       }
       const [values] = this.chart.data.datasets;
-      const next = [latest, 1 - latest];
+      const next = [latest.toFixed(2), (1 - latest).toFixed(2)];
       values.data = next;
       this.chart.update();
     }

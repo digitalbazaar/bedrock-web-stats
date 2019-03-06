@@ -10,13 +10,21 @@ export default {
       type: Number,
       default: () => 100
     },
-    labels: {
-      type: Array,
-      required: true
+    display: {
+      type: Object,
+      required: true,
+      labels: {
+        type: Array,
+        required: true
+      },
+      colors: {
+        type: Array,
+        required: true
+      }
     },
-    data: {
+    series: {
       type: Array,
-      required: true
+      default: () => ([])
     }
   },
   data() {
@@ -24,19 +32,27 @@ export default {
       chart: null
     };
   },
+  watch: {
+    series(newSeries) {
+      const latest = newSeries[newSeries.length - 1];
+      if(!latest || !latest.y) {
+        return false;
+      }
+      const [values] = this.chart.data.datasets;
+      const next = [values.data[1], latest.y];
+      values.data = next;
+      this.chart.update();
+    }
+  },
   mounted() {
     this.chart = new Chart(this.$el, {
       type: 'doughnut',
       data: {
-        labels: ['Red', 'Blue'],
+        labels: this.display.labels,
         datasets: [{
           label: 'Gauge',
-          data: [10, 190],
-          backgroundColor: [
-            'rgb(255, 99, 132)',
-            'rgb(54, 162, 235)',
-            'rgb(255, 205, 86)'
-          ]
+          data: [25, 75],
+          backgroundColor: this.display.colors
         }]
       },
       options: {

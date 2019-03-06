@@ -3,7 +3,21 @@
     class="column gutter-md background"
     padding>
     <div class="row">
-      <gauge />
+      <span>
+        <gauge
+          :display="loadDisplay"
+          :series="loadavg" />
+      </span>
+      <span>
+        <gauge
+          :display="memDisplay"
+          :series="memused" />
+      </span>
+      <span>
+        <gauge
+          :display="fsDisplay"
+          :series="fssize" />
+      </span>
     </div>
     <time-series
       id="load-avg"
@@ -41,7 +55,19 @@ export default {
     return {
       loadavg: [],
       memused: [],
-      fssize: []
+      fssize: [],
+      loadDisplay: {
+        labels: ['Last Load', 'Current Load'],
+        colors: ['rgba(255,0,100)', 'rgba(10, 255, 255)']
+      },
+      memDisplay: {
+        labels: ['Last RAM Usage', 'Current RAM Usage'],
+        colors: ['rgba(5,255,100)', 'rgba(100, 25, 255)']
+      },
+      fsDisplay: {
+        labels: ['Last HD Used', 'Current HD Usage'],
+        colors: ['rgba(55,0,100)', 'rgba(100, 55, 55)']
+      }
     };
   },
   beforeCreate() {

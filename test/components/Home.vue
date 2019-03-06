@@ -2,6 +2,9 @@
   <q-page
     class="column gutter-md background"
     padding>
+    <div class="row">
+      <gauge />
+    </div>
     <time-series
       id="load-avg"
       :series="loadavg"
@@ -28,11 +31,12 @@
 
 // FIXME: chartjs is loaded as a global in index.js as a hack
 import {StatsService} from 'bedrock-web-stats';
-import TimeSeries from './TimeSeries.vue';
+import TimeSeries from './TimeSeriesChart.vue';
+import Gauge from './GaugeChart.vue';
 
 export default {
   name: 'Home',
-  components: {TimeSeries},
+  components: {TimeSeries, Gauge},
   data() {
     return {
       loadavg: [],

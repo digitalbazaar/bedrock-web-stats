@@ -14,7 +14,6 @@
 
 <script>
 /* globals Chart */
-import debounce from 'lodash/debounce';
 import 'chart.js';
 import 'chartjs-plugin-streaming';
 
@@ -51,6 +50,9 @@ export default {
             }
           }],
         },
+        animation: {
+          duration: 40
+        }
       })
     }
   },
@@ -72,7 +74,9 @@ export default {
   },
   watch: {
     series(newSeries) {
-      newSeries.forEach(s => this.chart.data.datasets[0].data.push(s));
+      // the docs for the realtime plugin use this and some testing
+      // shows this cuts down requestAnimationFrame took x ms errors
+      Array.prototype.push.apply(this.chart.data.datasets[0].data, newSeries);
       this.chart.update();
     }
   },
@@ -93,10 +97,6 @@ export default {
     this.chart = myChart;
   },
   methods: {
-    updateData: debounce(function(newSeries) {
-      this.chart.data.datasets[0].data = newSeries;
-      this.chart.update();
-    }, 60),
     changeTime() {
       const [data] = this.chart.options.scales.xAxes;
       data.time.unit = this.timeUnit;

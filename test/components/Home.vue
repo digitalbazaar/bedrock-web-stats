@@ -5,18 +5,21 @@
     <div class="row">
       <span>
         <gauge
-          :display="loadDisplay"
-          :series="loadavg" />
+          title="CPU"
+          :colors="loadDisplay"
+          :last="lastCPU" />
       </span>
       <span>
         <gauge
-          :display="memDisplay"
-          :series="memused" />
+          title="RAM"
+          :colors="memDisplay"
+          :last="lastRAM" />
       </span>
       <span>
         <gauge
-          :display="fsDisplay"
-          :series="fssize" />
+          title="Disk Space"
+          :colors="fsDisplay"
+          :last="lastDISK" />
       </span>
     </div>
     <time-series
@@ -56,18 +59,12 @@ export default {
       loadavg: [],
       memused: [],
       fssize: [],
-      loadDisplay: {
-        labels: ['Last Load', 'Current Load'],
-        colors: ['rgba(255,0,100)', 'rgba(10, 255, 255)']
-      },
-      memDisplay: {
-        labels: ['Last RAM Usage', 'Current RAM Usage'],
-        colors: ['rgba(5,255,100)', 'rgba(100, 25, 255)']
-      },
-      fsDisplay: {
-        labels: ['Last HD Used', 'Current HD Usage'],
-        colors: ['rgba(55,0,100)', 'rgba(100, 55, 55)']
-      }
+      lastRAM: 0.5,
+      lastCPU: 0.5,
+      lastDISK: 0.5,
+      loadDisplay: ['rgba(255,0,100)', 'rgba(10, 255, 255)'],
+      memDisplay: ['rgba(5,255,100)', 'rgba(100, 25, 255)'],
+      fsDisplay: ['rgba(155,5,100)', 'rgba(100, 155, 255)']
     };
   },
   beforeCreate() {
@@ -78,6 +75,9 @@ export default {
   },
   methods: {
     subscriber(results, latest) {
+      if(!latest.length) {
+        return false;
+      }
       const loadAvg = latest.map(r => (
         {x: r.createdDate, y: r.monitors.os.currentLoad.avgload}));
       this.$set(this, 'loadavg', loadAvg);
@@ -88,6 +88,13 @@ export default {
         {x: r.createdDate,
           y: r.monitors.os.fsSize.reduce((acc, cur) => acc + cur.used, 0)}));
       this.$set(this, 'fssize', fsSize);
+      const last = latest[latest.length - 1];
+      const lastCPU = last.monitors.os.currentLoad.avgload;
+      this.$set(this, 'lastCPU', lastCPU);
+      const lastRAM = last.monitors.os.mem.active / last.monitors.os.mem.available;
+      this.$set(this, 'lastRAM', lastRAM);
+      const lastDISK = 0.4;
+      this.$set(this, 'lastDISK', lastDISK);
     }
   }
 };

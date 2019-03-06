@@ -8,23 +8,25 @@ export default {
   props: {
     height: {
       type: Number,
-      default: () => 100
+      default: () => 150
     },
-    display: {
-      type: Object,
-      required: true,
-      labels: {
-        type: Array,
-        required: true
-      },
-      colors: {
-        type: Array,
-        required: true
+    labels: {
+      type: Array,
+      default() {
+        return ['Used', 'Available'];
       }
     },
-    series: {
+    title: {
+      type: String,
+      required: true
+    },
+    colors: {
       type: Array,
-      default: () => ([])
+      required: true
+    },
+    last: {
+      type: Object,
+      default: () => ({})
     }
   },
   data() {
@@ -33,13 +35,13 @@ export default {
     };
   },
   watch: {
-    series(newSeries) {
-      const latest = newSeries[newSeries.length - 1];
-      if(!latest || !latest.y) {
+    last(latest) {
+      console.log('latest', latest);
+      if(!latest) {
         return false;
       }
       const [values] = this.chart.data.datasets;
-      const next = [values.data[1], latest.y];
+      const next = [latest, 1 - latest];
       values.data = next;
       this.chart.update();
     }
@@ -48,11 +50,11 @@ export default {
     this.chart = new Chart(this.$el, {
       type: 'doughnut',
       data: {
-        labels: this.display.labels,
+        labels: this.labels,
         datasets: [{
           label: 'Gauge',
           data: [0.5, 0.5],
-          backgroundColor: this.display.colors
+          backgroundColor: this.colors
         }]
       },
       options: {
@@ -64,6 +66,10 @@ export default {
         },
         tooltips: {
           enabled: true
+        },
+        title: {
+          display: true,
+          text: this.title
         }
       }
     });

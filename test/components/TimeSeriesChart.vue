@@ -48,7 +48,7 @@ export default {
             time: {
               unit: 'second',
             }
-          }],
+          }]
         },
         animation: {
           duration: 40

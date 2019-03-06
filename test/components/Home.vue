@@ -25,19 +25,19 @@
     <time-series
       id="load-avg"
       :series="charts.loadavg"
-      label="Load Average" />
+      label="CPU Usage" />
     <time-series
       id="mem-used"
       line="green"
       fill="red"
       :series="charts.memused"
-      label="Memory Used" />
+      label="RAM Usage Gb" />
     <time-series
       id="fs-used"
       line="purple"
       fill="grey"
       :series="charts.fssize"
-      label="Hard Drive Usage" />
+      label="Disk Space in Gb" />
   </q-page>
 </template>
 <script>
@@ -70,6 +70,7 @@ export default {
   },
   methods: {
     subscriber(latest) {
+      const gb = Math.pow(2, 30);
       if(!latest.length) {
         return false;
       }
@@ -77,10 +78,10 @@ export default {
       charts.loadavg = latest.map(r => (
         {x: r.createdDate, y: r.monitors.os.currentLoad.avgload}));
       charts.memused = latest.map(r => (
-        {x: r.createdDate, y: r.monitors.os.mem.used}));
+        {x: r.createdDate, y: r.monitors.os.mem.used / gb}));
       charts.fssize = latest.map(r => (
-        {x: r.createdDate,
-          y: r.monitors.os.fsSize.reduce((acc, cur) => acc + cur.used, 0)}));
+        {x: r.createdDate, y: r.monitors.os.fsSize
+          .reduce((acc, cur) => acc + cur.used, 0) / gb}));
       const last = latest[latest.length - 1];
       charts.lastCPU = last.monitors.os.currentLoad.avgload;
       charts.lastRAM =

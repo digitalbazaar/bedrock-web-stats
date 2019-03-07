@@ -10,7 +10,8 @@
       ref="canvas"
       height="50" />
     <span @click="pause">
-      pause
+      <span v-if="!paused">pause</span>
+      <span v-else>resume</span>
     </span>
   </div>
 </template>
@@ -71,14 +72,16 @@ export default {
   },
   watch: {
     series(newSeries) {
-      const rounded = newSeries.map(p => {
+      newSeries.forEach(p => {
         p.y = p.y.toFixed(2);
-        return p;
+        this.chart.data.datasets[0].data.push(p);
       });
-      // the docs for the realtime plugin use this and some testing
-      // shows this cuts down requestAnimationFrame took x ms errors
-      Array.prototype.push.apply(this.chart.data.datasets[0].data, rounded);
       this.chart.update();
+    },
+    max(newMax, oldMax) {
+      if(newMax !== oldMax) {
+        this.updateMax(newMax);
+      }
     }
   },
   mounted() {
@@ -107,7 +110,9 @@ export default {
           yAxes: [
             {
               ticks: {
-                min: this.min
+                min: this.min,
+                max: this.max,
+                maxTicksLimit: 3
               }
             }
           ]
@@ -129,6 +134,11 @@ export default {
     changeTime() {
       const [axis] = this.chart.options.scales.xAxes;
       axis.time.unit = this.timeUnit;
+      this.chart.update();
+    },
+    updateMax(max) {
+      const [axis] = this.chart.options.scales.yAxes;
+      axis.ticks.max = max;
       this.chart.update();
     }
   }

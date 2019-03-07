@@ -24,18 +24,22 @@
     </div>
     <time-series
       id="load-avg"
+      fill="rgba(10,100,200,0.5)"
+      :max="charts.maxCPU"
       :series="charts.loadavg"
       label="CPU Usage" />
     <time-series
       id="mem-used"
       line="green"
-      fill="red"
+      fill="rgba(10,255,30,0.5)"
+      :max="charts.maxRAM"
       :series="charts.memused"
       label="RAM Usage Gb" />
     <time-series
       id="fs-used"
       line="purple"
-      fill="grey"
+      fill="rgba(255,100,255,0.5)"
+      :max="charts.maxDISK"
       :series="charts.fssize"
       label="Disk Space in Gb" />
   </q-page>
@@ -56,7 +60,7 @@ export default {
   components: {TimeSeries, Gauge},
   data() {
     return {
-      charts: {},
+      charts: {last: {}},
       loadDisplay: ['rgba(255,0,100)', 'rgba(10, 255, 255)'],
       memDisplay: ['rgba(5,255,100)', 'rgba(100, 25, 255)'],
       fsDisplay: ['rgba(155,5,100)', 'rgba(100, 155, 255)']
@@ -84,10 +88,13 @@ export default {
           .reduce((acc, cur) => acc + cur.used, 0) / gb}));
       charts.last = latest[latest.length - 1];
       charts.lastCPU = charts.last.monitors.os.currentLoad.avgload;
-      charts.lastRAM =
-        charts.last.monitors.os.mem.active / charts.last.monitors.os.mem.available;
-      charts.lastDISK =
-        charts.last.monitors.os.fsSize[0].used / charts.last.monitors.os.fsSize[0].size;
+      const {used, total} = charts.last.monitors.os.mem;
+      charts.lastRAM = used / total;
+      const {fsSize} = charts.last.monitors.os;
+      charts.lastDISK = fsSize[0].used / fsSize[0].size;
+      charts.maxCPU = charts.last.monitors.os.currentLoad.cpus.length;
+      charts.maxRAM = Math.ceil(total / gb);
+      charts.maxDISK = Math.ceil(fsSize[0].size / gb);
       this.$set(this, 'charts', charts);
     }
   }

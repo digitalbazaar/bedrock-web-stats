@@ -76,7 +76,7 @@ export default {
         return false;
       }
       const [values] = this.chart.data.datasets;
-      const next = [this.last, (1 - this.last)];
+      const next = [this.last, (1 - this.last).toFixed(2)];
       values.data = next;
       this.chart.update();
     }

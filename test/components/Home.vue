@@ -6,19 +6,23 @@
       <span>
         <gauge
           title="CPU"
-          :colors="loadDisplay"
+          :color="loadDisplay"
+          :max="charts.maxCPU"
+          unit="CPUS"
           :last="charts.lastCPU" />
       </span>
       <span>
         <gauge
           title="RAM"
-          :colors="memDisplay"
+          :color="memDisplay"
+          :max="charts.maxRAM"
           :last="charts.lastRAM" />
       </span>
       <span>
         <gauge
           title="Disk Space"
-          :colors="fsDisplay"
+          :color="fsDisplay"
+          :max="charts.maxDISK"
           :last="charts.lastDISK" />
       </span>
     </div>
@@ -61,9 +65,9 @@ export default {
   data() {
     return {
       charts: {last: {}},
-      loadDisplay: ['rgba(255,0,100)', 'rgba(10, 255, 255)'],
-      memDisplay: ['rgba(5,255,100)', 'rgba(100, 25, 255)'],
-      fsDisplay: ['rgba(155,5,100)', 'rgba(100, 155, 255)']
+      loadDisplay: 'rgba(255,0,100)',
+      memDisplay: 'rgba(5,255,100)',
+      fsDisplay: 'rgba(155,5,100)'
     };
   },
   beforeCreate() {

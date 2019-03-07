@@ -1,5 +1,11 @@
 <template>
-  <canvas :height="height" />
+  <div class="relative">
+    <canvas ref="chart" />
+    <div class="absolute-center text-center">
+      <p> {{last}}% </p>
+      <p> of {{max}} {{unit}} </p>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -20,13 +26,21 @@ export default {
       type: String,
       required: true
     },
-    colors: {
-      type: Array,
+    color: {
+      type: String,
       required: true
     },
     last: {
-      type: Object,
-      default: () => ({})
+      type: Number,
+      default: () => 0.5
+    },
+    max: {
+      type: String,
+      default: () => ''
+    },
+    unit: {
+      type: String,
+      default: () => 'Gb'
     }
   },
   data() {
@@ -36,30 +50,31 @@ export default {
   },
   watch: {
     last(latest) {
+      this.last = Number(latest).toFixed(2);
       if(!latest) {
         return false;
       }
       const [values] = this.chart.data.datasets;
-      const next = [latest.toFixed(2), (1 - latest).toFixed(2)];
+      const next = [this.last, (1 - this.last)];
       values.data = next;
       this.chart.update();
     }
   },
   mounted() {
-    this.chart = new Chart(this.$el, {
+    this.chart = new Chart(this.$refs.chart, {
       type: 'doughnut',
       data: {
         labels: this.labels,
         datasets: [{
           label: 'Gauge',
           data: [0.5, 0.5],
-          backgroundColor: this.colors
+          backgroundColor: [this.color, 'rgba(228,223,223)']
         }]
       },
       options: {
         circumference: Math.PI,
         rotation: Math.PI,
-        cutoutPercentage: 80, // percent
+        cutoutPercentage: 70, // percent
         legend: {
           display: true
         },
@@ -77,4 +92,23 @@ export default {
 </script>
 
 <style scoped>
+.relative {
+  position: relative;
+}
+
+.absolute-center {
+  position:absolute;
+  top: 85%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.text-center{
+  text-align: center;
+}
+
+p {
+  font-size:  1rem;
+  line-height: 0.25rem;
+}
 </style>

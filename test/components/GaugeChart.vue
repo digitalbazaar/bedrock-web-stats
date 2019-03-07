@@ -83,7 +83,6 @@ export default {
       data: {
         labels: this.labels,
         datasets: [{
-          label: 'Gauge',
           data: [0.5, 0.5],
           backgroundColor: [this.color, 'rgba(228,223,223)']
         }]
@@ -118,10 +117,6 @@ export default {
   top: 85%;
   left: 50%;
   transform: translate(-50%, -50%);
-}
-
-.text-center{
-  text-align: center;
 }
 
 p {

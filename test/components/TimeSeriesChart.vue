@@ -106,7 +106,7 @@ export default {
           xAxes: [{
             type: 'realtime',
             realtime: {
-              duration: 10000,
+              duration: 60000,
               pause: false
             },
             time: {

@@ -2,8 +2,10 @@
   <div class="relative">
     <canvas ref="chart" />
     <div class="absolute-center text-center">
-      <p> {{last}}% </p>
-      <p> of {{max}} {{unit}} </p>
+      <p>
+        <span :style="style">{{percentage}}</span><sup>%</sup>
+      </p>
+      <p> {{used}} of {{max}} {{unit}} </p>
     </div>
   </div>
 </template>
@@ -40,13 +42,32 @@ export default {
     },
     unit: {
       type: String,
-      default: () => 'Gb'
+      default: () => 'GB'
+    },
+    textSize: {
+      type: String,
+      default: () => '2.5rem'
     }
   },
   data() {
     return {
       chart: null
     };
+  },
+  computed: {
+    style() {
+      return {
+        color: this.color,
+        'font-size': this.textSize,
+        'margin-bottom': '1.5rem'
+      };
+    },
+    used() {
+      return Math.ceil(this.max * this.last);
+    },
+    percentage() {
+      return (this.last * 100).toFixed(0);
+    }
   },
   watch: {
     last(latest) {
@@ -76,7 +97,7 @@ export default {
         rotation: Math.PI,
         cutoutPercentage: 70, // percent
         legend: {
-          display: true
+          display: false
         },
         tooltips: {
           enabled: true

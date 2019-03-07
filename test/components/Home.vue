@@ -38,14 +38,14 @@
       fill="rgba(10,255,30,0.5)"
       :max="charts.maxRAM"
       :series="charts.memused"
-      label="RAM Usage Gb" />
+      label="RAM Usage GB" />
     <time-series
       id="fs-used"
       line="purple"
       fill="rgba(255,100,255,0.5)"
       :max="charts.maxDISK"
       :series="charts.fssize"
-      label="Disk Space in Gb" />
+      label="Disk Space in GB" />
   </q-page>
 </template>
 <script>
@@ -66,7 +66,7 @@ export default {
     return {
       charts: {last: {}},
       loadDisplay: 'rgba(255,0,100)',
-      memDisplay: 'rgba(5,255,100)',
+      memDisplay: 'rgba(5,200,100)',
       fsDisplay: 'rgba(155,5,100)'
     };
   },

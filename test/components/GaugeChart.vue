@@ -5,10 +5,13 @@
       <p class="percent-holder">
         <span
           :style="style"
-          class="chart-percent">{{percentage}}<sup class="percent-sup">%</sup>
+          class="gauge-percent">{{percentage}}<sup class="percent-sup">%</sup>
         </span>
       </p>
-      <p> {{used}} of {{max}} {{unit}} </p>
+      <p
+        class="gauge-info-line">
+        {{used}} of {{max}} {{unit}}
+      </p>
     </div>
   </div>
 </template>
@@ -130,7 +133,7 @@ p {
   line-height: 0.25rem;
 }
 
-.chart-percent {
+.gauge-percent {
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
 }

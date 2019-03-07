@@ -20,10 +20,6 @@
 export default {
   Name: 'GaugeChart',
   props: {
-    height: {
-      type: Number,
-      default: () => 150
-    },
     labels: {
       type: Array,
       default() {

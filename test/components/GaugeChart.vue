@@ -1,9 +1,12 @@
 <template>
-  <div class="relative">
+  <div class="relative gauge-holder">
     <canvas ref="chart" />
     <div class="absolute-center text-center">
-      <p>
-        <span :style="style">{{percentage}}</span><sup>%</sup>
+      <p class="percent-holder">
+        <span
+          :style="style"
+          class="chart-percent">{{percentage}}<sup class="percent-sup">%</sup>
+        </span>
       </p>
       <p> {{used}} of {{max}} {{unit}} </p>
     </div>
@@ -43,10 +46,6 @@ export default {
     unit: {
       type: String,
       default: () => 'GB'
-    },
-    textSize: {
-      type: String,
-      default: () => '2.5rem'
     }
   },
   data() {
@@ -57,9 +56,7 @@ export default {
   computed: {
     style() {
       return {
-        color: this.color,
-        'font-size': this.textSize,
-        'margin-bottom': '1.5rem'
+        color: this.color
       };
     },
     used() {
@@ -131,5 +128,15 @@ export default {
 p {
   font-size:  1rem;
   line-height: 0.25rem;
+}
+
+.chart-percent {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.percent-sup {
+  color: black;
+  font-size: 1rem;
 }
 </style>

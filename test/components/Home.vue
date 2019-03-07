@@ -6,7 +6,7 @@
       <span>
         <gauge
           title="CPU"
-          :color="loadDisplay"
+          :color="colors().cpu"
           :max="charts.maxCPU"
           unit="CPUS"
           :last="charts.lastCPU" />
@@ -14,35 +14,36 @@
       <span>
         <gauge
           title="RAM"
-          :color="memDisplay"
+          :color="colors().ram"
           :max="charts.maxRAM"
           :last="charts.lastRAM" />
       </span>
       <span>
         <gauge
           title="Disk Space"
-          :color="fsDisplay"
+          :color="colors().disk"
           :max="charts.maxDISK"
           :last="charts.lastDISK" />
       </span>
     </div>
     <time-series
       id="load-avg"
-      fill="rgba(10,100,200,0.5)"
+      :line="colors().line"
+      :fill="colors(0.8).cpu"
       :max="charts.maxCPU"
       :series="charts.loadavg"
       label="CPU Usage" />
     <time-series
       id="mem-used"
-      line="green"
-      fill="rgba(10,255,30,0.5)"
+      :line="colors().line"
+      :fill="colors(0.8).ram"
       :max="charts.maxRAM"
       :series="charts.memused"
       label="RAM Usage GB" />
     <time-series
       id="fs-used"
-      line="purple"
-      fill="rgba(255,100,255,0.5)"
+      :line="colors().line"
+      :fill="colors(0.8).disk"
       :max="charts.maxDISK"
       :series="charts.fssize"
       label="Disk Space in GB" />
@@ -65,9 +66,6 @@ export default {
   data() {
     return {
       charts: {last: {}},
-      loadDisplay: 'rgba(255,0,100)',
-      memDisplay: 'rgba(5,200,100)',
-      fsDisplay: 'rgba(155,5,100)'
     };
   },
   beforeCreate() {
@@ -77,6 +75,14 @@ export default {
     this._statsService.subscribe({id: 'demo', updater: this.subscriber});
   },
   methods: {
+    colors(alpha = 1) {
+      return {
+        ram: `rgba(0, 0, 184, ${alpha})`,
+        cpu: `rgba(241, 215, 0, ${alpha})`,
+        disk: `rgba(202, 44, 146, ${alpha})`,
+        line: `rgba(100,100,100, ${alpha})`
+      };
+    },
     subscriber(latest) {
       const gb = Math.pow(2, 30);
       if(!latest.length) {
@@ -106,4 +112,7 @@ export default {
 </script>
 <style>
 @import "https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.12/c3.min.css"
+main.background {
+  background-color: 'black';
+}
 </style>

@@ -112,7 +112,7 @@ export default {
               ticks: {
                 min: this.min,
                 max: this.max,
-                maxTicksLimit: 3
+                stepSize: 1
               }
             }
           ]
@@ -139,6 +139,7 @@ export default {
     updateMax(max) {
       const [axis] = this.chart.options.scales.yAxes;
       axis.ticks.max = max;
+      axis.ticks.stepSize = Math.ceil(max / 4);
       this.chart.update();
     }
   }

@@ -21,7 +21,7 @@ import 'chart.js';
 import 'chartjs-plugin-streaming';
 
 export default {
-  Name: 'Chart',
+  Name: 'TimeSeriesChart',
   props: {
     label: {
       type: String,
@@ -42,24 +42,13 @@ export default {
         return [];
       }
     },
-    options: {
-      type: Object,
-      default: () => ({
-        scales: {
-          xAxes: [{
-            type: 'realtime',
-            realtime: {
-              pause: false
-            },
-            time: {
-              unit: 'second',
-            }
-          }]
-        },
-        animation: {
-          duration: 40
-        }
-      })
+    max: {
+      type: Number,
+      default: () => 1
+    },
+    min: {
+      type: Number,
+      default: () => 0
     }
   },
   data() {
@@ -82,9 +71,13 @@ export default {
   },
   watch: {
     series(newSeries) {
+      const rounded = newSeries.map(p => {
+        p.y = p.y.toFixed(2);
+        return p;
+      });
       // the docs for the realtime plugin use this and some testing
       // shows this cuts down requestAnimationFrame took x ms errors
-      Array.prototype.push.apply(this.chart.data.datasets[0].data, newSeries);
+      Array.prototype.push.apply(this.chart.data.datasets[0].data, rounded);
       this.chart.update();
     }
   },
@@ -100,7 +93,29 @@ export default {
           pointRadius: 1,
         }]
       },
-      options: this.options
+      options: {
+        scales: {
+          xAxes: [{
+            type: 'realtime',
+            realtime: {
+              pause: false
+            },
+            time: {
+              unit: 'second',
+            }
+          }],
+          yAxes: [
+            {
+              ticks: {
+                min: this.min
+              }
+            }
+          ]
+        },
+        animation: {
+          duration: 40
+        }
+      }
     });
     this.chart = myChart;
   },

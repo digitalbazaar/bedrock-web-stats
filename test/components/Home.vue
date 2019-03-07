@@ -82,12 +82,12 @@ export default {
       charts.fssize = latest.map(r => (
         {x: r.createdDate, y: r.monitors.os.fsSize
           .reduce((acc, cur) => acc + cur.used, 0) / gb}));
-      const last = latest[latest.length - 1];
-      charts.lastCPU = last.monitors.os.currentLoad.avgload;
+      charts.last = latest[latest.length - 1];
+      charts.lastCPU = charts.last.monitors.os.currentLoad.avgload;
       charts.lastRAM =
-        last.monitors.os.mem.active / last.monitors.os.mem.available;
+        charts.last.monitors.os.mem.active / charts.last.monitors.os.mem.available;
       charts.lastDISK =
-        last.monitors.os.fsSize[0].used / last.monitors.os.fsSize[0].size;
+        charts.last.monitors.os.fsSize[0].used / charts.last.monitors.os.fsSize[0].size;
       this.$set(this, 'charts', charts);
     }
   }

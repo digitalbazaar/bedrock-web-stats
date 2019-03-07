@@ -1,18 +1,22 @@
 <template>
   <div>
-    <div class="q-m-a-lg q-p-a-lg">
+    <div class="row q-m-a-lg q-p-a-lg">
       <q-select
         v-model="timeUnit"
+        class="col-3"
         :options="times"
         @input="changeTime()" />
+      <span class="col-4" />
+      <span
+        class="col-4"
+        @click="pause">
+        <span v-if="!paused">pause</span>
+        <span v-else>resume</span>
+      </span>
     </div>
     <canvas
       ref="canvas"
       height="50" />
-    <span @click="pause">
-      <span v-if="!paused">pause</span>
-      <span v-else>resume</span>
-    </span>
   </div>
 </template>
 
@@ -94,6 +98,7 @@ export default {
           borderColor: this.line,
           backgroundColor: this.fill,
           pointRadius: 1,
+          pointHitRadius: 5
         }]
       },
       options: {
@@ -101,6 +106,7 @@ export default {
           xAxes: [{
             type: 'realtime',
             realtime: {
+              duration: 10000,
               pause: false
             },
             time: {

@@ -92,14 +92,14 @@ export default {
       charts.loadavg = latest.map(r => (
         {x: r.createdDate, y: r.monitors.os.currentLoad.avgload}));
       charts.memused = latest.map(r => (
-        {x: r.createdDate, y: r.monitors.os.mem.used / gb}));
+        {x: r.createdDate, y: r.monitors.os.mem.active / gb}));
       charts.fssize = latest.map(r => (
         {x: r.createdDate, y: r.monitors.os.fsSize
           .reduce((acc, cur) => acc + cur.used, 0) / gb}));
       charts.last = latest[latest.length - 1];
       charts.lastCPU = charts.last.monitors.os.currentLoad.avgload;
-      const {used, total} = charts.last.monitors.os.mem;
-      charts.lastRAM = used / total;
+      const {active, total} = charts.last.monitors.os.mem;
+      charts.lastRAM = active / total;
       const {fsSize} = charts.last.monitors.os;
       charts.lastDISK = fsSize[0].used / fsSize[0].size;
       charts.maxCPU = charts.last.monitors.os.currentLoad.cpus.length;

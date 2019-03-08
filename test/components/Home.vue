@@ -3,7 +3,7 @@
     class="column gutter-md background"
     padding>
     <div class="row">
-      <span>
+      <span class="col-4">
         <gauge
           title="CPU"
           :color="colors().cpu"
@@ -11,14 +11,14 @@
           unit="CPUS"
           :last="charts.lastCPU" />
       </span>
-      <span>
+      <span class="col-4">
         <gauge
           title="RAM"
           :color="colors().ram"
           :max="charts.maxRAM"
           :last="charts.lastRAM" />
       </span>
-      <span>
+      <span class="col-4">
         <gauge
           title="Disk Space"
           :color="colors().disk"
@@ -90,7 +90,7 @@ export default {
       }
       const charts = {};
       charts.loadavg = latest.map(r => (
-        {x: r.createdDate, y: r.monitors.os.currentLoad.avgload}));
+        {x: r.createdDate, y: r.monitors.os.currentLoad.avgload * 10}));
       charts.memused = latest.map(r => (
         {x: r.createdDate, y: r.monitors.os.mem.active / gb}));
       charts.fssize = latest.map(r => (
@@ -111,7 +111,6 @@ export default {
 };
 </script>
 <style>
-@import "https://cdnjs.cloudflare.com/ajax/libs/c3/0.6.12/c3.min.css"
 main.background {
   background-color: 'black';
 }

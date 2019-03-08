@@ -1,15 +1,15 @@
 <template>
   <div>
-    <div class="row q-m-a-lg q-p-a-lg">
+    <div class="row q-pa-lg">
       <q-select
         v-model="timeUnit"
-        class="col-3"
+        class="col-2"
         :options="times"
         @input="changeTime()" />
-      <span class="col-4" />
       <span
-        class="col-4"
+        class="col-1 q-mx-lg"
         @click="pause">
+        <q-icon name="fas fa-pause-circle" />
         <span v-if="!paused">pause</span>
         <span v-else>resume</span>
       </span>

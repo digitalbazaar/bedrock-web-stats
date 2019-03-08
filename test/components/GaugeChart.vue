@@ -95,7 +95,7 @@ export default {
           display: false
         },
         tooltips: {
-          enabled: true
+          enabled: false
         },
         title: {
           display: true,

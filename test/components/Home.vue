@@ -2,19 +2,51 @@
   <q-page
     class="column gutter-md background"
     padding>
-    <div class="column items-center">
-      <q-btn
-        id="submit-btn"
-        color="faded"
-        @click="getStats">
-        Get Stats
-      </q-btn>
+    <div class="row">
+      <span class="col-4">
+        <br-gauge-chart
+          title="CPU"
+          :color="colors().cpu"
+          :max="charts.maxCPU"
+          unit="CPUS"
+          :last="charts.lastCPU" />
+      </span>
+      <span class="col-4">
+        <br-gauge-chart
+          title="RAM"
+          :color="colors().ram"
+          :max="charts.maxRAM"
+          :last="charts.lastRAM" />
+      </span>
+      <span class="col-4">
+        <br-gauge-chart
+          title="Disk Space"
+          :color="colors().disk"
+          :max="charts.maxDISK"
+          :last="charts.lastDISK" />
+      </span>
     </div>
-    <div>
-      <pre>
-        {{reports}}
-      </pre>
-    </div>
+    <br-time-series-chart
+      id="load-avg"
+      :line="colors().line"
+      :fill="colors(0.8).cpu"
+      :max="charts.maxCPU"
+      :series="charts.loadavg"
+      label="CPU Usage" />
+    <br-time-series-chart
+      id="mem-used"
+      :line="colors().line"
+      :fill="colors(0.8).ram"
+      :max="charts.maxRAM"
+      :series="charts.memused"
+      label="RAM Usage GB" />
+    <br-time-series-chart
+      id="fs-used"
+      :line="colors().line"
+      :fill="colors(0.8).disk"
+      :max="charts.maxDISK"
+      :series="charts.fssize"
+      label="Disk Space in GB" />
   </q-page>
 </template>
 <script>
@@ -23,34 +55,44 @@
  */
 'use strict';
 
+// FIXME: chartjs is loaded as a global in index.js as a hack
 import {StatsService} from 'bedrock-web-stats';
+import {BrGaugeChart, BrTimeSeriesChart} from 'bedrock-vue-stats';
 
 export default {
   name: 'Home',
-  components: {},
+  components: {BrGaugeChart, BrTimeSeriesChart},
   data() {
     return {
-      reports: []
+      charts: {last: {}},
     };
   },
   beforeCreate() {
-    this._statsService = new StatsService();
+    this._statsService = new StatsService({poll: 2000});
+  },
+  mounted() {
+    this._statsService.subscribe({id: 'demo', updater: this.subscriber});
   },
   methods: {
-    async getStats() {
-      const result = await this._statsService.get({
-        // specify which monitors to pull
-        monitorIds: ['os'],
-        // get stats from the last 5 seconds
-        startDate: Date.now() - 5000
-      });
-      this.reports = result;
+    colors(alpha = 1) {
+      return {
+        ram: `rgba(0, 0, 184, ${alpha})`,
+        cpu: `rgba(100, 199, 85, ${alpha})`,
+        disk: `rgba(200, 44, 146, ${alpha})`,
+        line: `rgba(100,100,100, ${alpha})`
+      };
     },
-    done() {
-      console.log('Done!', this.form);
+    subscriber(charts) {
+      if(!charts) {
+        return false;
+      }
+      this.$set(this, 'charts', charts);
     }
   }
 };
 </script>
 <style>
+main.background {
+  background-color: 'black';
+}
 </style>

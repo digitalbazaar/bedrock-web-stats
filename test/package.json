@@ -3,6 +3,7 @@
   "version": "0.0.1-0",
   "private": true,
   "main": "index.js",
+  "less": "app.less",
   "scripts": {
     "start": "redis-cli flushall && node --preserve-symlinks test.js",
     "test": "redis-cli flushall && node --preserve-symlinks test.js test --framework karma",

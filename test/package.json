@@ -35,6 +35,7 @@
     "bedrock-vue": "^1.0.0",
     "bedrock-web": "^1.0.0",
     "bedrock-web-stats": "file:..",
+    "bedrock-vue-stats": "github:digitalbazaar/bedrock-vue-stats#initial",
     "bedrock-webpack": "^2.0.0",
     "vue": "^2.5.16",
     "vue-router": "^3.0.1",

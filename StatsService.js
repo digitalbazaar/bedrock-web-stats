@@ -33,6 +33,7 @@ export class StatsService {
       return window.bedrock.statsService;
     }
     this.update.bind(this);
+    this._loading = true;
     this.poll = poll;
     this.subscribers = new Set();
     this.results = [];
@@ -44,17 +45,37 @@ export class StatsService {
     return window.bedrock.statsService;
   }
   /**
+   * Is this the first load?.
+   * @return {boolean} True only if there are no results.
+   */
+  get loading() {
+    return this._loading && !this.results.length;
+  }
+  /**
+   * Is this an update?.
+   * @return {boolean} True only if there are results.
+   */
+  get updating() {
+    return this._loading && this.results.length > 0;
+  }
+  /**
    * awaits the result every second
    * concats it to the current result then updates the subscribers
    */
   async update() {
-    const result = await this.get({
+    this._loading = true;
+    const latest = await this.get({
       monitorIds: ['os'],
       startDate: this.lastTime + 1
     });
-    this.results = this.results.concat(result);
+    if(!latest.length) {
+      return false;
+    }
+    this.results = this.results.concat(latest);
+    const last = latest[latest.length - 1];
     this.subscribers.forEach(
-      s => s.updater(this.formatter(result), this.results));
+      s => s.updater(this.formatter(latest), last, this.results));
+    this._loading = false;
   }
   /**
    * this takes in a Subscription used to update a graph.
@@ -99,9 +120,6 @@ export class StatsService {
    *  @return {Object|null} A chart with graph info assigned to keys.
    */
   formatter(latest) {
-    if(!latest.length) {
-      return null;
-    }
     const chart = {};
     chart.loadavg = [];
     chart.memused = [];
@@ -115,11 +133,8 @@ export class StatsService {
         {x: r.createdDate, y: r.monitors.os.fsSize[0].used / gb});
     });
     chart.last = latest[latest.length - 1];
-    chart.lastCPU = chart.last.monitors.os.currentLoad.avgload;
-    const {active, total} = chart.last.monitors.os.mem;
-    chart.lastRAM = active / total;
+    const {total} = chart.last.monitors.os.mem;
     const {fsSize} = chart.last.monitors.os;
-    chart.lastDISK = fsSize[0].used / fsSize[0].size;
     chart.maxCPU = chart.last.monitors.os.currentLoad.cpus.length;
     chart.maxRAM = Math.ceil(total / gb);
     chart.maxDISK = Math.ceil(fsSize[0].size / gb);

@@ -4,3 +4,4 @@
 'use strict';
 
 export {StatsService} from './StatsService.js';
+export {ChartController} from './ChartController.js';

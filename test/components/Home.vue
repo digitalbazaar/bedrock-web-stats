@@ -1,5 +1,6 @@
 <template>
   <q-page
+    v-if="!loading"
     class="column gutter-md background"
     padding>
     <div class="row">
@@ -7,23 +8,23 @@
         <br-gauge-chart
           title="CPU"
           :color="colors().cpu"
-          :max="charts.maxCPU"
+          :max="cpu.chart.max"
           unit="CPUS"
-          :last="charts.lastCPU" />
+          :last="cpu.chart.last" />
       </span>
       <span class="col-4">
         <br-gauge-chart
           title="RAM"
           :color="colors().ram"
-          :max="charts.maxRAM"
-          :last="charts.lastRAM" />
+          :max="ram.chart.max"
+          :last="ram.chart.last" />
       </span>
       <span class="col-4">
         <br-gauge-chart
           title="Disk Space"
           :color="colors().disk"
-          :max="charts.maxDISK"
-          :last="charts.lastDISK" />
+          :max="disk.chart.max"
+          :last="disk.chart.last" />
       </span>
     </div>
     <br-time-series-chart
@@ -59,7 +60,7 @@
 'use strict';
 
 // FIXME: chartjs is loaded as a global in index.js as a hack
-import {StatsService} from 'bedrock-web-stats';
+import {StatsService, ChartController} from 'bedrock-web-stats';
 import {BrGaugeChart, BrTimeSeriesChart} from 'bedrock-vue-stats';
 
 export default {
@@ -68,13 +69,48 @@ export default {
   data() {
     return {
       charts: {last: {}},
+      statsService: null,
+      cpu: null,
+      ram: null,
+      disk: null
     };
   },
-  beforeCreate() {
-    this._statsService = new StatsService({poll: 2000});
+  computed: {
+    loading() {
+      if(!this.statsService) {
+        return true;
+      }
+      return this.statsService.loading;
+    }
   },
   mounted() {
-    this._statsService.subscribe({id: 'demo', updater: this.subscriber});
+    this.$set(this, 'cpu', new ChartController(
+      {
+        type: 'pie',
+        format: {
+          prefix(r) {return r.monitors.os.currentLoad;},
+          last(p) {return p.avgload;},
+          max(p) {return p.cpus.length;}
+        }}));
+    this.$set(this, 'ram', new ChartController(
+      {
+        type: 'pie',
+        format: {
+          prefix(r) {return r.monitors.os.mem;},
+          last(p) {return p.active / p.total;},
+          max(p) {return Math.ceil(p.total / this.units.gb);}
+        }}));
+    this.$set(this, 'disk', new ChartController(
+      {
+        type: 'pie',
+        format: {
+          prefix(r) {return r.monitors.os.fsSize[0];},
+          last(p) {return p.used / p.size;},
+          max(p) {return Math.ceil(p.size / this.units.gb);}
+        }}));
+
+    this.$set(this, 'statsService', new StatsService({poll: 2000}));
+    this.statsService.subscribe({id: 'demo', updater: this.subscriber});
   },
   methods: {
     colors(alpha = 1) {

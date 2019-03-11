@@ -32,6 +32,7 @@
       :fill="colors(0.8).cpu"
       :max="charts.maxCPU"
       :series="charts.loadavg"
+      realtime
       label="CPU Usage" />
     <br-time-series-chart
       id="mem-used"
@@ -39,6 +40,7 @@
       :fill="colors(0.8).ram"
       :max="charts.maxRAM"
       :series="charts.memused"
+      realtime
       label="RAM Usage GB" />
     <br-time-series-chart
       id="fs-used"
@@ -46,6 +48,7 @@
       :fill="colors(0.8).disk"
       :max="charts.maxDISK"
       :series="charts.fssize"
+      realtime
       label="Disk Space in GB" />
   </q-page>
 </template>

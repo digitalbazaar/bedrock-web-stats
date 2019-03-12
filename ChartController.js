@@ -58,10 +58,26 @@ export class ChartController {
   }
   set chart(data) {
     const {prefix = r => r.monitors.os} = this.format;
-    const root = prefix(data) || data;
-    this._chart.last = this.format.last(root);
-    this._chart.max = this.format.max(root);
-    return this._chart;
+    switch(this.type) {
+      case ChartType.pie: {
+        const root = prefix(data) || data;
+        this._chart.last = this.format.last(root);
+        this._chart.max = this.format.max(root);
+        return this._chart;
+      }
+      case ChartType.line:
+      case ChartType.time:
+      case ChartType.realtime: {
+        const last = data[data.length - 1];
+        const {x = d => d.createdDate} = this.format;
+        this._chart.series = data.map(d => ({
+          x: x(d),
+          y: this.format.y(prefix(d))
+        }));
+        this._chart.max = this.format.max(prefix(last));
+        return this._chart;
+      }
+    }
   }
   updater(latest, last, all) {
     switch(this.type) {

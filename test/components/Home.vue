@@ -31,24 +31,24 @@
       id="load-avg"
       :line="colors().line"
       :fill="colors(0.8).cpu"
-      :max="charts.maxCPU"
-      :series="charts.loadavg"
+      :max="cpuseries.chart.max"
+      :series="cpuseries.chart.series"
       realtime
       label="CPU Usage" />
     <br-time-series-chart
       id="mem-used"
       :line="colors().line"
       :fill="colors(0.8).ram"
-      :max="charts.maxRAM"
-      :series="charts.memused"
+      :max="ramseries.chart.max"
+      :series="ramseries.chart.series"
       realtime
       label="RAM Usage GB" />
     <br-time-series-chart
       id="fs-used"
       :line="colors().line"
       :fill="colors(0.8).disk"
-      :max="charts.maxDISK"
-      :series="charts.fssize"
+      :max="diskseries.chart.max"
+      :series="diskseries.chart.series"
       realtime
       label="Disk Space in GB" />
   </q-page>
@@ -60,7 +60,7 @@
 'use strict';
 
 // FIXME: chartjs is loaded as a global in index.js as a hack
-import {StatsService, ChartController} from 'bedrock-web-stats';
+import {ChartController} from 'bedrock-web-stats';
 import {BrGaugeChart, BrTimeSeriesChart} from 'bedrock-vue-stats';
 
 export default {
@@ -72,15 +72,19 @@ export default {
       statsService: null,
       cpu: null,
       ram: null,
-      disk: null
+      disk: null,
+      cpuseries: null,
+      ramseries: null,
+      diskseries: null
+
     };
   },
   computed: {
     loading() {
-      if(!this.statsService) {
+      if(!this.cpu) {
         return true;
       }
-      return this.statsService.loading;
+      return this.cpu.loading;
     }
   },
   mounted() {
@@ -98,7 +102,7 @@ export default {
         format: {
           prefix(r) {return r.monitors.os.mem;},
           last(p) {return p.active / p.total;},
-          max(p) {return Math.ceil(p.total / this.units.gb);}
+          max(p) {return p.total / this.units.gb;}
         }}));
     this.$set(this, 'disk', new ChartController(
       {
@@ -106,11 +110,32 @@ export default {
         format: {
           prefix(r) {return r.monitors.os.fsSize[0];},
           last(p) {return p.used / p.size;},
-          max(p) {return Math.ceil(p.size / this.units.gb);}
+          max(p) {return p.size / this.units.gb;}
         }}));
-
-    this.$set(this, 'statsService', new StatsService({poll: 2000}));
-    this.statsService.subscribe({id: 'demo', updater: this.subscriber});
+    this.$set(this, 'cpuseries', new ChartController(
+      {
+        type: 'realtime',
+        format: {
+          prefix(r) {return r.monitors.os.currentLoad;},
+          y(p) {return p.avgload * 10;},
+          max(p) {return p.cpus.length;}
+        }}));
+    this.$set(this, 'ramseries', new ChartController(
+      {
+        type: 'realtime',
+        format: {
+          prefix(r) {return r.monitors.os.mem;},
+          y(p) {return p.active / this.units.gb;},
+          max(p) {return p.total / this.units.gb;}
+        }}));
+    this.$set(this, 'diskseries', new ChartController(
+      {
+        type: 'realtime',
+        format: {
+          prefix(r) {return r.monitors.os.fsSize[0];},
+          y(p) {return p.used / this.units.gb;},
+          max(p) {return p.size / this.units.gb;}
+        }}));
   },
   methods: {
     colors(alpha = 1) {
@@ -120,12 +145,6 @@ export default {
         disk: `rgba(200, 44, 146, ${alpha})`,
         line: `rgba(100,100,100, ${alpha})`
       };
-    },
-    subscriber(charts) {
-      if(!charts) {
-        return false;
-      }
-      this.$set(this, 'charts', charts);
     }
   }
 };

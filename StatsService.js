@@ -6,7 +6,6 @@
 import axios from 'axios';
 
 const headers = {Accept: 'application/ld+json, application/json'};
-const gb = Math.pow(2, 30);
 
 /**
  * A subscription is an Object with an id and a function that are used
@@ -110,34 +109,5 @@ export class StatsService {
       return Date.now() - 100000;
     }
     return this.results[this.results.length - 1].createdDate;
-  }
-  /*
-   *  TODO: turn this into the product of applying all sub funcs
-   *  to data.
-   *  this is not properly abstracted so will be revising, but
-   *  removes chart logic from vue
-   *  @param {Array<Object>} latest - The latest stats from the api.
-   *  @return {Object|null} A chart with graph info assigned to keys.
-   */
-  formatter(latest) {
-    const chart = {};
-    chart.loadavg = [];
-    chart.memused = [];
-    chart.fssize = [];
-    latest.forEach(r => {
-      chart.loadavg.push(
-        {x: r.createdDate, y: r.monitors.os.currentLoad.avgload * 10});
-      chart.memused.push(
-        {x: r.createdDate, y: r.monitors.os.mem.active / gb});
-      chart.fssize.push(
-        {x: r.createdDate, y: r.monitors.os.fsSize[0].used / gb});
-    });
-    chart.last = latest[latest.length - 1];
-    const {total} = chart.last.monitors.os.mem;
-    const {fsSize} = chart.last.monitors.os;
-    chart.maxCPU = chart.last.monitors.os.currentLoad.cpus.length;
-    chart.maxRAM = Math.ceil(total / gb);
-    chart.maxDISK = Math.ceil(fsSize[0].size / gb);
-    return chart;
   }
 }

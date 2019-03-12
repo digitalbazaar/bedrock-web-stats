@@ -16,20 +16,19 @@ const ChartUnit = {
 /**
  * Describes the format of the data
  * @typedef {Object} Format
- * @property {ChartUnit} unit -
- * Optional param used to get the data into a specific size.
- * @property {number} [scalar = 1] - Optional param that scales the values
- * @property {string} y - Required for time/line charts describes the y.
- * @property {string} [x = 'createdDate'] - Optional key for the x value
- * @property {string|Array<string>} last - Pie Charts used the last values.
- * @property {string} max - The key for the max value for a chart.
+ * @property {Function} [prefix = r.monitors.os] -
+ * Shortens the number of properties needed to get to a value.
+ * @property {Function} y - Required for time/line charts describes the y.
+ * @property {Function} [x = r => r.createdDate] - Optional key for the x value
+ * @property {Function} last - Pie Charts use the last values.
+ * @property {Function} max - Returns the max value.
  */
 
 export class ChartController {
   /**
    * @param {Object} options - Options for the chart.
    * @param {ChartType} [options.type = 'pie'] - Chart type.
-   * @param {Format} [keys = []] - The keys for the chart.
+   * @param {Format} format - The format for the chart.
    * @param {number} [poll = 2000] - How often the StatsService will poll.
    */
 

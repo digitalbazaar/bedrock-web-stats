@@ -110,7 +110,7 @@ export default {
         format: {
           prefix(r) {return r.monitors.os.fsSize[0];},
           last(p) {return p.used / p.size;},
-          max(p) {return p.size / this.units.gb;}
+          max(p) {return Math.ceil(p.size / this.units.gb);}
         }}));
     this.$set(this, 'cpuseries', new ChartController(
       {

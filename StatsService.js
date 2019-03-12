@@ -8,10 +8,10 @@ import axios from 'axios';
 const headers = {Accept: 'application/ld+json, application/json'};
 
 /**
- * A subscription is an Object with an id and a function that are used
+ * A subscription is an Object with an id and an updater function that are used
  * to make a chart.
  * @typedef {Object} Subscription
- * @property {String} id - a unique if for the subscription
+ * @property {String} id - a unique id for the subscription
  * @property {Function} updater - a function called on update
  */
 

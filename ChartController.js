@@ -16,11 +16,13 @@ const ChartUnit = {
 /**
  * Describes the format of the data
  * @typedef {Object} Format
- * @property {Function} [prefix = r.monitors.os] -
+ * @property {Function} [prefix = r => r.monitors.os] -
  * Shortens the number of properties needed to get to a value.
- * @property {Function} y - Required for time/line charts describes the y.
- * @property {Function} [x = r => r.createdDate] - Optional key for the x value
- * @property {Function} last - Pie Charts use the last values.
+ * @property {Function} [y] - Required for time/line charts describes the y.
+ * @property {Function} [x = r => r.createdDate] -
+ * Optional function that gets the x value.
+ * @property {Function} [last] -
+ * Pie Charts use this to calculate the last value.
  * @property {Function} max - Returns the max value.
  */
 

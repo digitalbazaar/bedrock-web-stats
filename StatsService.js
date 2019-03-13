@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright (c) 2018-2019 Digital Bazaar, Inc. All rights reserved.
  */
 'use strict';
@@ -9,21 +9,24 @@ const headers = {Accept: 'application/ld+json, application/json'};
 
 /**
  * A subscription is an Object with an id and an updater function that are used
- * to make a chart.
+ * to make a chart. A ChartController implements both id and updater.
  * @typedef {Object} Subscription
  * @property {String} id - a unique id for the subscription
  * @property {Function} updater - a function called on update
  */
 
-/**
- * Stats Service is a singleton
- * locked to poll the stats api every second.
- * It is stored in window.bedrock.statsService
- * @param {Object} config
- * @param {number} [config.poll = 1000] -
- * time in ms for each request to the api.
- */
-export class StatsService {
+class StatsService {
+  /**
+   * Stats Service is a singleton.
+   * It polls the stats api using an interval.
+   * It is stored in window.bedrock.statsService.
+   *
+   * @param {Object} options - Options for the StatsService.
+   * @param {number} [options.poll = 1000] -
+   * time in ms for each request to the api.
+   *
+   * @returns {StatsService} Either an existing one or a new one.
+   */
   constructor({poll = 1000} = {}) {
     if(!window.bedrock) {
       window.bedrock = {};
@@ -37,29 +40,30 @@ export class StatsService {
     this.subscribers = new Set();
     this.results = [];
     if(this.intervalId) {
-      return;
+      return window.bedrock.statsService;
     }
     this.intervalId = setInterval(() => this.update(), this.poll);
     window.bedrock.statsService = this;
     return window.bedrock.statsService;
   }
   /**
-   * Is this the first load?.
-   * @return {boolean} True only if there are no results.
+   * Determines if this is the first load.
+   *
+   * @returns {boolean} True only if there are no results.
    */
   get loading() {
     return this._loading && !this.results.length;
   }
   /**
-   * Is this an update?.
-   * @return {boolean} True only if there are results.
+   * Determines if this is a subsequent update and not an initial load.
+   *
+   * @returns {boolean} True only if there are results.
    */
   get updating() {
     return this._loading && this.results.length > 0;
   }
   /**
-   * awaits the result every second
-   * concats it to the current result then updates the subscribers
+   * Is passed to the interval and fires on every poll.
    */
   async update() {
     this._loading = true;
@@ -77,16 +81,17 @@ export class StatsService {
     this._loading = false;
   }
   /**
-   * this takes in a Subscription used to update a graph.
-   * @param {Subscription} update
+   * This takes in a Subscription used to update a graph.
+   *
+   * @param {Subscription} update - This can be a ChartController.
    */
   subscribe(update) {
     this.subscribers.add(update);
   }
   /**
-   * each subscription is unique and can be deleted.
-   * @param {Subscription} sub -
-   * the subscription reference the component stored.
+   * Each subscription is unique and can be deleted.
+   *
+   * @param {Subscription} sub - This can be a ChartController.
    */
   unsubscribe(sub) {
     this.subscribers = this.subscribers.delete(sub);
@@ -101,8 +106,9 @@ export class StatsService {
     return result.data;
   }
   /**
-   * gets the last time or returns a time 100000 ms from now
-   * @return {string} A utc timestamp in milliseconds.
+   * Gets the last time or returns a time 100000 ms from now.
+   *
+   * @returns {string} A utc timestamp in milliseconds.
    */
   get lastTime() {
     if(!this.results.length) {
@@ -111,3 +117,6 @@ export class StatsService {
     return this.results[this.results.length - 1].createdDate;
   }
 }
+
+export {StatsService};
+// https://github.com/jsdoc3/jsdoc/issues/1293

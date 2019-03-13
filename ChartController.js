@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2018-2019 Digital Bazaar, Inc. All rights reserved.
+ */
+'use strict';
+
 import {StatsService} from 'bedrock-web-stats';
 
 // TODO: https://www.chartjs.org/docs/latest/charts/
@@ -20,24 +25,23 @@ const ChartUnit = {
  * Shortens the number of properties needed to get to a value.
  * @property {Function} [y] - Required for time/line charts describes the y.
  * @property {Function} [x = r => r.createdDate] -
- * Optional function that gets the x value.
+ * Optional function that gets the x value for line charts.
  * @property {Function} [last] -
  * Pie Charts use this to calculate the last value.
  * @property {Function} max - Returns the max value.
  */
 
-export class ChartController {
+class ChartController {
   /**
    * @param {Object} options - Options for the chart.
    * @param {ChartType} [options.type = 'pie'] - Chart type.
-   * @param {Format} format - The format for the chart.
-   * @param {number} [poll = 2000] - How often the StatsService will poll.
+   * @param {Format} options.format - The format for the chart.
+   * @param {number} [options.poll = 2000] - How often StatsService will poll.
    */
-
   constructor({type = 'pie', format, poll = 2000}) {
     const chartType = ChartType[type];
     if(!chartType) {
-      throw new Error(`${type} Chart is unsupported`);
+      throw new Error(`${type} Charts are unsupported`);
     }
     this.type = type;
     this.format = format;
@@ -48,15 +52,37 @@ export class ChartController {
     this.updater.bind(this);
     this._statsService.subscribe(this);
   }
+  /**
+   * @returns {Object} An updated chart.
+   */
   get chart() {
     return this._chart;
   }
+  /**
+   * @returns {ChartUnit} Can be used to format data.
+   */
+  get units() {
+    return ChartUnit;
+  }
+  /**
+   * @returns {boolean} Is the chart loading?
+   */
   get loading() {
     return this._statsService.loading;
   }
+  /**
+   * @returns {boolean} Is the chart updating?
+   */
   get updating() {
     return this._statsService.updating;
   }
+  /**
+   * Sets the chart using the ChartType.
+   *
+   * @param {Object|Array<Object>} data - Data is determined by ChartType.
+   *
+   * @returns {Object} Chart with new data.
+   */
   set chart(data) {
     const {prefix = r => r.monitors.os} = this.format;
     switch(this.type) {
@@ -78,8 +104,19 @@ export class ChartController {
         this._chart.max = this.format.max(prefix(last));
         return this._chart;
       }
+      default: {
+        console.warn(`unable to format ${this.type} charts`);
+        return this._chart;
+      }
     }
   }
+  /**
+   * Called be StatsService on each update.
+   *
+   * @param {Array} latest - The data from the latest update only.
+   * @param {Object} last - The last piece of data from the update.
+   * @param {Array<Object>} all - All of the data received so far.
+   */
   updater(latest, last, all) {
     switch(this.type) {
       case ChartType.pie: {
@@ -92,7 +129,10 @@ export class ChartController {
       }
       default: {
         this.chart = all;
+        break;
       }
     }
   }
 }
+export {ChartController};
+// https://github.com/jsdoc3/jsdoc/issues/1293

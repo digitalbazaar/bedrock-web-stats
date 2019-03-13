@@ -5,7 +5,7 @@ const jsdoc2md = require('jsdoc-to-markdown');
 const fs = require('fs');
 
 const template = fs.readFileSync('./docs/template.hbs', 'utf-8');
-const opFactory = file => ({files: `./${file}`});
+const opFactory = file => ({template, files: `./${file}`});
 
 // we only generate docs for files which end with .js.
 const docs = /.js$/i;

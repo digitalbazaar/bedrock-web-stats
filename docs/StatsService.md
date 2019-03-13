@@ -1,3 +1,5 @@
+## Usage
+
 ## Classes
 
 <dl>
@@ -105,3 +107,6 @@ to make a chart. A ChartController implements both id and updater.
 | id | <code>String</code> | a unique id for the subscription |
 | updater | <code>function</code> | a function called on update |
 
+
+---
+Copyright (c) 2018-2019 Digital Bazaar, Inc. All rights reserved.

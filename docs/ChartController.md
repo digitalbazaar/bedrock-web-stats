@@ -1,3 +1,5 @@
+## Usage
+
 ## Classes
 
 <dl>
@@ -99,3 +101,6 @@ Describes the format of the data
 | [last] | <code>function</code> |  | Pie Charts use this to calculate the last value. |
 | max | <code>function</code> |  | Returns the max value. |
 
+
+---
+Copyright (c) 2018-2019 Digital Bazaar, Inc. All rights reserved.

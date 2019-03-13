@@ -3,6 +3,9 @@
   "version": "0.0.1-0",
   "description": "Bedrock Web Stats",
   "main": "index.js",
+  "scripts": {
+    "docs": "rm ./docs/*.md && node ./docs/generate.js"
+  },
   "dependencies": {
     "axios": "^0.18.0"
   },

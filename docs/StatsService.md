@@ -11,7 +11,7 @@
 
 <dl>
 <dt><a href="#Subscription">Subscription</a> : <code>Object</code></dt>
-<dd><p>A subscription is an Object with an id and an updater function that are used
+<dd><p>A subscription is an Object with an id and an updater function that is used
 to make a chart. A ChartController implements both id and updater.</p>
 </dd>
 </dl>
@@ -96,7 +96,7 @@ Each subscription is unique and can be deleted.
 <a name="Subscription"></a>
 
 ## Subscription : <code>Object</code>
-A subscription is an Object with an id and an updater function that are used
+A subscription is an Object with an id and an updater function that is used
 to make a chart. A ChartController implements both id and updater.
 
 **Kind**: global typedef  

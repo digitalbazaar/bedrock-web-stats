@@ -7,6 +7,14 @@ import {StatsService} from 'bedrock-web-stats';
 
 // TODO: https://www.chartjs.org/docs/latest/charts/
 // implement all chart types
+/**
+ * [ChartTypes from Chart.js](https://www.chartjs.org/docs/latest/charts/)
+ * @typedef {Object} ChartType
+ * @property {string} pie - For Pie charts.
+ * @property {string} time - For Static Time Charts.
+ * @property {string} line - For Static Line Charts.
+ * @property {string} realtime - For realtime Charts.
+ */
 const ChartType = {
   pie: 'pie',
   time: 'time',
@@ -14,6 +22,11 @@ const ChartType = {
   realtime: 'realtime'
 };
 
+/**
+ * Units such as gigabytes that the stats needed to be formatted in.
+ * @typedef ChartUnit
+ * @property {number} gb - the number of bytes in a gigabyte.
+ */
 const ChartUnit = {
   gb: Math.pow(2, 30)
 };
@@ -111,7 +124,7 @@ class ChartController {
     }
   }
   /**
-   * Called be StatsService on each update.
+   * Called by StatsService on each update.
    *
    * @param {Array} latest - The data from the latest update only.
    * @param {Object} last - The last piece of data from the update.

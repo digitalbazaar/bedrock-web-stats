@@ -92,12 +92,15 @@ class ChartController {
   /**
    * Sets the chart using the ChartType.
    *
-   * @param {Object|Array<Object>} data - Data is determined by ChartType.
+   * @param {Object} data - Data from the StatsService update.
+   * @param {Array} data.latest - The data from the latest update only.
+   * @param {Object} data.last - The last piece of data from the update.
+   * @param {Array<Object>} data.all - All of the data received so far.
    *
    * @returns {Object} Chart with new data.
    */
   set chart(data) {
-    const {prefix = r => r.monitors.os} = this.format;
+    const {prefix = d => d} = this.format;
     switch(this.type) {
       case ChartType.pie: {
         const root = prefix(data) || data;
@@ -108,13 +111,15 @@ class ChartController {
       case ChartType.line:
       case ChartType.time:
       case ChartType.realtime: {
-        const last = data[data.length - 1];
-        const {x = d => d.createdDate} = this.format;
-        this._chart.series = data.map(d => ({
-          x: x(d),
-          y: this.format.y(prefix(d))
-        }));
-        this._chart.max = this.format.max(prefix(last));
+        const root = prefix(data) || data;
+        // this last is truncated from the prefix
+        const last = root[root.length - 1];
+        const {x = (_, i) => data.latest[i].createdDate} = this.format;
+        this._chart.series = root.map(((d, index) => ({
+          x: x(d, index),
+          y: this.format.y(d, index)
+        })));
+        this._chart.max = this.format.max(last);
         return this._chart;
       }
       default: {
@@ -126,25 +131,13 @@ class ChartController {
   /**
    * Called by StatsService on each update.
    *
-   * @param {Array} latest - The data from the latest update only.
-   * @param {Object} last - The last piece of data from the update.
-   * @param {Array<Object>} all - All of the data received so far.
+   * @param {Object} data - Data from the StatsService update.
+   * @param {Array} data.latest - The data from the latest update only.
+   * @param {Object} data.last - The last piece of data from the update.
+   * @param {Array<Object>} data.all - All of the data received so far.
    */
-  updater(latest, last, all) {
-    switch(this.type) {
-      case ChartType.pie: {
-        this.chart = last;
-        break;
-      }
-      case ChartType.realtime: {
-        this.chart = latest;
-        break;
-      }
-      default: {
-        this.chart = all;
-        break;
-      }
-    }
+  updater(data) {
+    this.chart = data;
   }
 }
 export {ChartController};

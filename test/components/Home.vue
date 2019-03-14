@@ -92,7 +92,7 @@ export default {
       {
         type: 'pie',
         format: {
-          prefix(r) {return r.monitors.os.currentLoad;},
+          prefix({last}) {return last.monitors.os.currentLoad;},
           last(p) {return p.avgload;},
           max(p) {return p.cpus.length;}
         }}));
@@ -100,7 +100,7 @@ export default {
       {
         type: 'pie',
         format: {
-          prefix(r) {return r.monitors.os.mem;},
+          prefix({last}) {return last.monitors.os.mem;},
           last(p) {return p.active / p.total;},
           max(p) {return Math.ceil(p.total / this.units.gb);}
         }}));
@@ -108,7 +108,7 @@ export default {
       {
         type: 'pie',
         format: {
-          prefix(r) {return r.monitors.os.fsSize[0];},
+          prefix({last}) {return last.monitors.os.fsSize[0];},
           last(p) {return p.used / p.size;},
           max(p) {return Math.ceil(p.size / this.units.gb);}
         }}));
@@ -116,7 +116,7 @@ export default {
       {
         type: 'realtime',
         format: {
-          prefix(r) {return r.monitors.os.currentLoad;},
+          prefix({latest}) {return latest.map(r => r.monitors.os.currentLoad);},
           y(p) {return p.avgload * p.cpus.length;},
           max(p) {return p.cpus.length;}
         }}));
@@ -124,7 +124,7 @@ export default {
       {
         type: 'realtime',
         format: {
-          prefix(r) {return r.monitors.os.mem;},
+          prefix({latest}) {return latest.map(r => r.monitors.os.mem);},
           y(p) {return p.active / this.units.gb;},
           max(p) {return p.total / this.units.gb;}
         }}));
@@ -132,7 +132,7 @@ export default {
       {
         type: 'realtime',
         format: {
-          prefix(r) {return r.monitors.os.fsSize[0];},
+          prefix({latest}) {return latest.map(r => r.monitors.os.fsSize[0]);},
           y(p) {return p.used / this.units.gb;},
           max(p) {return p.size / this.units.gb;}
         }}));

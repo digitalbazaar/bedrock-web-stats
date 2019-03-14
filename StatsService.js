@@ -77,7 +77,7 @@ class StatsService {
     this.results = this.results.concat(latest);
     const last = latest[latest.length - 1];
     this.subscribers.forEach(
-      s => s.updater(latest, last, this.results));
+      s => s.updater({latest, last, all: this.results}));
     this._loading = false;
   }
   /**

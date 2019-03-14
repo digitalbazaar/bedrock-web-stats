@@ -32,9 +32,19 @@ const ChartUnit = {
 };
 
 /**
+ * Recieves all the data from each update and get it's ready for the other
+ * functions such as x, y, last, and max
+ * @typedef {Function} Prefix
+ * @param {Object} data - Data from the StatsService update.
+ * @param {Array} data.latest - The data from the latest update only.
+ * @param {Object} data.last - The last piece of data from the update.
+ * @param {Array<Object>} data.all - All of the data received so far.
+*/
+
+/**
  * Describes the format of the data
  * @typedef {Object} Format
- * @property {Function} [prefix = r => r.monitors.os] -
+ * @property {Prefix} [prefix = ({last}) => last.monitors.os] -
  * Shortens the number of properties needed to get to a value.
  * @property {Function} [y] - Required for time/line charts describes the y.
  * @property {Function} [x = r => r.createdDate] -

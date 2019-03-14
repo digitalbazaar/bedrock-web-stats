@@ -16,6 +16,10 @@
 <dt><a href="#ChartUnit">ChartUnit</a></dt>
 <dd><p>Units such as gigabytes that the stats needed to be formatted in.</p>
 </dd>
+<dt><a href="#Prefix">Prefix</a> : <code>function</code></dt>
+<dd><p>Recieves all the data from each update and get it&#39;s ready for the other
+functions such as x, y, last, and max</p>
+</dd>
 <dt><a href="#Format">Format</a> : <code>Object</code></dt>
 <dd><p>Describes the format of the data</p>
 </dd>
@@ -33,7 +37,7 @@
     * [.loading](#ChartController+loading) ⇒ <code>boolean</code>
     * [.updating](#ChartController+updating) ⇒ <code>boolean</code>
     * [.chart](#ChartController+chart) ⇒ <code>Object</code>
-    * [.updater(latest, last, all)](#ChartController+updater)
+    * [.updater(data)](#ChartController+updater)
 
 <a name="new_ChartController_new"></a>
 
@@ -76,20 +80,24 @@ Sets the chart using the ChartType.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| data | <code>Object</code> \| <code>Array.&lt;Object&gt;</code> | Data is determined by ChartType. |
+| data | <code>Object</code> | Data from the StatsService update. |
+| data.latest | <code>Array</code> | The data from the latest update only. |
+| data.last | <code>Object</code> | The last piece of data from the update. |
+| data.all | <code>Array.&lt;Object&gt;</code> | All of the data received so far. |
 
 <a name="ChartController+updater"></a>
 
-### chartController.updater(latest, last, all)
+### chartController.updater(data)
 Called by StatsService on each update.
 
 **Kind**: instance method of [<code>ChartController</code>](#ChartController)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| latest | <code>Array</code> | The data from the latest update only. |
-| last | <code>Object</code> | The last piece of data from the update. |
-| all | <code>Array.&lt;Object&gt;</code> | All of the data received so far. |
+| data | <code>Object</code> | Data from the StatsService update. |
+| data.latest | <code>Array</code> | The data from the latest update only. |
+| data.last | <code>Object</code> | The last piece of data from the update. |
+| data.all | <code>Array.&lt;Object&gt;</code> | All of the data received so far. |
 
 <a name="ChartType"></a>
 
@@ -118,6 +126,21 @@ Units such as gigabytes that the stats needed to be formatted in.
 | --- | --- | --- |
 | gb | <code>number</code> | the number of bytes in a gigabyte. |
 
+<a name="Prefix"></a>
+
+## Prefix : <code>function</code>
+Recieves all the data from each update and get it's ready for the other
+functions such as x, y, last, and max
+
+**Kind**: global typedef  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| data | <code>Object</code> | Data from the StatsService update. |
+| data.latest | <code>Array</code> | The data from the latest update only. |
+| data.last | <code>Object</code> | The last piece of data from the update. |
+| data.all | <code>Array.&lt;Object&gt;</code> | All of the data received so far. |
+
 <a name="Format"></a>
 
 ## Format : <code>Object</code>
@@ -128,7 +151,7 @@ Describes the format of the data
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| [prefix] | <code>function</code> | <code>r &#x3D;&gt; r.monitors.os</code> | Shortens the number of properties needed to get to a value. |
+| [prefix] | [<code>Prefix</code>](#Prefix) | <code>({last}) &#x3D;&gt; last.monitors.os</code> | Shortens the number of properties needed to get to a value. |
 | [y] | <code>function</code> |  | Required for time/line charts describes the y. |
 | [x] | <code>function</code> | <code>r &#x3D;&gt; r.createdDate</code> | Optional function that gets the x value for line charts. |
 | [last] | <code>function</code> |  | Pie Charts use this to calculate the last value. |

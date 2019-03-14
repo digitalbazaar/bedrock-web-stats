@@ -102,7 +102,7 @@ export default {
         format: {
           prefix(r) {return r.monitors.os.mem;},
           last(p) {return p.active / p.total;},
-          max(p) {return p.total / this.units.gb;}
+          max(p) {return Math.ceil(p.total / this.units.gb);}
         }}));
     this.$set(this, 'disk', new ChartController(
       {
@@ -117,7 +117,7 @@ export default {
         type: 'realtime',
         format: {
           prefix(r) {return r.monitors.os.currentLoad;},
-          y(p) {return p.avgload * 10;},
+          y(p) {return p.avgload * p.cpus.length;},
           max(p) {return p.cpus.length;}
         }}));
     this.$set(this, 'ramseries', new ChartController(

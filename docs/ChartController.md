@@ -20,6 +20,9 @@ functions such as x, y, last, and max.</p>
 <dt><a href="#Format">Format</a> : <code>Object</code></dt>
 <dd><p>Describes the format of the data.</p>
 </dd>
+<dt><a href="#Chart">Chart</a> : <code>Object</code></dt>
+<dd><p>The result of the updater&#39;s data applied to the Format.</p>
+</dd>
 </dl>
 
 <a name="ChartController"></a>
@@ -29,10 +32,10 @@ functions such as x, y, last, and max.</p>
 
 * [ChartController](#ChartController)
     * [new ChartController(options)](#new_ChartController_new)
-    * [.chart](#ChartController+chart) ⇒ <code>Object</code>
     * [.loading](#ChartController+loading) ⇒ <code>boolean</code>
     * [.updating](#ChartController+updating) ⇒ <code>boolean</code>
-    * [.chart](#ChartController+chart) ⇒ <code>Object</code>
+    * [.chart](#ChartController+chart) ⇒ [<code>Chart</code>](#Chart)
+    * [.chart](#ChartController+chart) ⇒ [<code>Chart</code>](#Chart)
     * [.updater(data)](#ChartController+updater)
 
 <a name="new_ChartController_new"></a>
@@ -46,11 +49,6 @@ functions such as x, y, last, and max.</p>
 | options.format | [<code>Format</code>](#Format) |  | The format for the chart. |
 | [options.poll] | <code>number</code> | <code>2000</code> | How often StatsService will poll. |
 
-<a name="ChartController+chart"></a>
-
-### chartController.chart ⇒ <code>Object</code>
-**Kind**: instance property of [<code>ChartController</code>](#ChartController)  
-**Returns**: <code>Object</code> - An updated chart.  
 <a name="ChartController+loading"></a>
 
 ### chartController.loading ⇒ <code>boolean</code>
@@ -63,11 +61,16 @@ functions such as x, y, last, and max.</p>
 **Returns**: <code>boolean</code> - Is the chart updating?  
 <a name="ChartController+chart"></a>
 
-### chartController.chart ⇒ <code>Object</code>
+### chartController.chart ⇒ [<code>Chart</code>](#Chart)
+**Kind**: instance property of [<code>ChartController</code>](#ChartController)  
+**Returns**: [<code>Chart</code>](#Chart) - An updated chart.  
+<a name="ChartController+chart"></a>
+
+### chartController.chart ⇒ [<code>Chart</code>](#Chart)
 Constructs the chart using the ChartType.
 
 **Kind**: instance property of [<code>ChartController</code>](#ChartController)  
-**Returns**: <code>Object</code> - Chart with new data.  
+**Returns**: [<code>Chart</code>](#Chart) - Chart with new data.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -95,6 +98,10 @@ This function is async because we do not want it blocking.
 [ChartTypes from Chart.js](https://www.chartjs.org/docs/latest/charts/).
 
 **Kind**: global typedef  
+**Todo**
+
+- [ ] implement all Chart.js chart types.
+
 **Properties**
 
 | Name | Type | Description |
@@ -133,6 +140,20 @@ Describes the format of the data.
 | [x] | <code>function</code> | <code>r &#x3D;&gt; r.createdDate</code> | Optional function that gets the x value for line charts. |
 | [last] | <code>function</code> |  | Pie Charts use this to calculate the last value. |
 | max | <code>function</code> |  | Returns the max value. |
+
+<a name="Chart"></a>
+
+## Chart : <code>Object</code>
+The result of the updater's data applied to the Format.
+
+**Kind**: global typedef  
+**Properties**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| [series] | <code>Array.&lt;Object&gt;</code> | An array used by line charts. |
+| [last] | <code>Object</code> | Used by Pie charts to update their latest value. |
+| max | <code>number</code> | The max value for the chart. |
 
 
 ---

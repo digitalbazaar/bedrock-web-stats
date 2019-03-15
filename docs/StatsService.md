@@ -10,9 +10,9 @@
 ## Typedefs
 
 <dl>
-<dt><a href="#Subscription">Subscription</a> : <code>Object</code></dt>
-<dd><p>A subscription is an Object with an id and an updater function
-(such as ChartController) that is used to format the data for a Chart.</p>
+<dt><a href="#Subscription">Subscription</a> : <code>Promise</code></dt>
+<dd><p>A subscription is an async Function (such as ChartController.updater)
+that is used to format the data for a Chart.</p>
 </dd>
 </dl>
 
@@ -27,15 +27,14 @@
     * [.updating](#StatsService+updating) ⇒ <code>boolean</code>
     * [.lastTime](#StatsService+lastTime) ⇒ <code>string</code>
     * [.update()](#StatsService+update)
-    * [.subscribe(update)](#StatsService+subscribe)
-    * [.unsubscribe(sub)](#StatsService+unsubscribe)
+    * [.subscribe(subscription)](#StatsService+subscribe)
+    * [.unsubscribe(subscription)](#StatsService+unsubscribe)
 
 <a name="new_StatsService_new"></a>
 
 ### new StatsService(options)
 Stats Service is a singleton.
 It polls the stats api using an interval.
-It is stored in window.bedrock.statsService.
 
 **Returns**: [<code>StatsService</code>](#StatsService) - Either an existing one or a new one.  
 
@@ -74,39 +73,39 @@ It then updates each subscription.
 **Kind**: instance method of [<code>StatsService</code>](#StatsService)  
 <a name="StatsService+subscribe"></a>
 
-### statsService.subscribe(update)
+### statsService.subscribe(subscription)
 This takes in a Subscription used to update a chart and adds it to a set.
 
 **Kind**: instance method of [<code>StatsService</code>](#StatsService)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| update | [<code>Subscription</code>](#Subscription) | This can be a ChartController. |
+| subscription | [<code>Subscription</code>](#Subscription) | - This can be a ChartController's updater function. |
 
 <a name="StatsService+unsubscribe"></a>
 
-### statsService.unsubscribe(sub)
+### statsService.unsubscribe(subscription)
 Each subscription is unique and can be deleted.
 
 **Kind**: instance method of [<code>StatsService</code>](#StatsService)  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| sub | [<code>Subscription</code>](#Subscription) | This can be a ChartController. |
+| subscription | [<code>Subscription</code>](#Subscription) | - This can be a ChartController's updater function. |
 
 <a name="Subscription"></a>
 
-## Subscription : <code>Object</code>
-A subscription is an Object with an id and an updater function
-(such as ChartController) that is used to format the data for a Chart.
+## Subscription : <code>Promise</code>
+A subscription is an async Function (such as ChartController.updater)
+that is used to format the data for a Chart.
 
 **Kind**: global typedef  
-**Properties**
 
-| Name | Type | Description |
+| Param | Type | Description |
 | --- | --- | --- |
-| id | <code>String</code> | a unique id for the subscription. |
-| updater | <code>function</code> | a function called on update. |
+| data | <code>Object</code> | Data from the StatsService update. |
+| data.latest | <code>Object</code> | The data from the latest update only. |
+| data.all | <code>Array.&lt;Object&gt;</code> | All of the data received so far. |
 
 
 ---

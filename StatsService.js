@@ -8,18 +8,21 @@ import axios from 'axios';
 const headers = {Accept: 'application/ld+json, application/json'};
 
 /**
- * A subscription is an Object with an id and an updater function
- * (such as ChartController) that is used to format the data for a Chart.
- * @typedef {Object} Subscription
- * @property {String} id - a unique id for the subscription.
- * @property {Function} updater - a function called on update.
+ * A subscription is an async Function (such as ChartController.updater)
+ * that is used to format the data for a Chart.
+ * @typedef {Promise} Subscription
+ * @param {Object} data - Data from the StatsService update.
+ * @param {Object} data.latest - The data from the latest update only.
+ * @param {Array<Object>} data.all - All of the data received so far.
  */
+
+// instance stores the singleton
+let instance = null;
 
 class StatsService {
   /**
    * Stats Service is a singleton.
    * It polls the stats api using an interval.
-   * It is stored in window.bedrock.statsService.
    *
    * @param {Object} options - Options for the StatsService.
    * @param {number} [options.poll = 1000] -
@@ -28,23 +31,19 @@ class StatsService {
    * @returns {StatsService} Either an existing one or a new one.
    */
   constructor({poll = 1000} = {}) {
-    if(!window.bedrock) {
-      window.bedrock = {};
+    if(instance) {
+      return instance;
     }
-    if(window.bedrock.statsService) {
-      return window.bedrock.statsService;
-    }
-    this.update.bind(this);
+    this.update = this.update.bind(this);
     this._loading = true;
     this.poll = poll;
     this.subscribers = new Set();
     this.results = [];
-    if(this.intervalId) {
-      return window.bedrock.statsService;
+    if(!this.intervalId) {
+      this.intervalId = setInterval(this.update, this.poll);
     }
-    this.intervalId = setInterval(() => this.update(), this.poll);
-    window.bedrock.statsService = this;
-    return window.bedrock.statsService;
+    instance = this;
+    return instance;
   }
   /**
    * Determines if this is the first load.
@@ -78,25 +77,27 @@ class StatsService {
     latest.forEach(latest => {
       this.results.push(latest);
       this.subscribers.forEach(
-        s => s.updater({latest, all: this.results}));
+        subscription => subscription({latest, all: this.results}));
     });
     this._loading = false;
   }
   /**
    * This takes in a Subscription used to update a chart and adds it to a set.
    *
-   * @param {Subscription} update - This can be a ChartController.
+   * @param {Subscription} subscription
+   * - This can be a ChartController's updater function.
    */
-  subscribe(update) {
-    this.subscribers.add(update);
+  subscribe(subscription) {
+    this.subscribers.add(subscription);
   }
   /**
    * Each subscription is unique and can be deleted.
    *
-   * @param {Subscription} sub - This can be a ChartController.
+   * @param {Subscription} subscription
+   * - This can be a ChartController's updater function.
    */
-  unsubscribe(sub) {
-    this.subscribers = this.subscribers.delete(sub);
+  unsubscribe(subscription) {
+    this.subscribers = this.subscribers.delete(subscription);
   }
   /*
    * gets the actual data from the stats rest api

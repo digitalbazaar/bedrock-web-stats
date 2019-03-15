@@ -5,8 +5,6 @@
 
 import {StatsService} from 'bedrock-web-stats';
 
-// TODO: https://www.chartjs.org/docs/latest/charts/
-// implement all chart types
 /**
  * [ChartTypes from Chart.js](https://www.chartjs.org/docs/latest/charts/).
  * @typedef {Object} ChartType
@@ -14,6 +12,7 @@ import {StatsService} from 'bedrock-web-stats';
  * @property {string} time - For Static Time Charts.
  * @property {string} line - For Static Line Charts.
  * @property {string} realtime - For realtime Charts.
+ * @todo implement all Chart.js chart types.
  */
 const ChartType = {
   pie: 'pie',
@@ -44,6 +43,14 @@ const ChartType = {
  * @property {Function} max - Returns the max value.
  */
 
+/**
+ * The result of the updater's data applied to the Format.
+ * @typedef {Object} Chart
+ * @property {Array<Object>} [series] - An array used by line charts.
+ * @property {Object} [last] - Used by Pie charts to update their latest value.
+ * @property {number} max - The max value for the chart.
+ */
+
 class ChartController {
   /**
    * @param {Object} options - Options for the chart.
@@ -61,14 +68,8 @@ class ChartController {
     this._chart = {};
     this._statsService = new StatsService({poll});
     this.id = `${type}-${Date.now()}`;
-    this.updater.bind(this);
-    this._statsService.subscribe(this);
-  }
-  /**
-   * @returns {Object} An updated chart.
-   */
-  get chart() {
-    return this._chart;
+    this.updater = this.updater.bind(this);
+    this._statsService.subscribe(this.updater);
   }
   /**
    * @returns {boolean} Is the chart loading?
@@ -83,13 +84,19 @@ class ChartController {
     return this._statsService.updating;
   }
   /**
+   * @returns {Chart} An updated chart.
+   */
+  get chart() {
+    return this._chart;
+  }
+  /**
    * Constructs the chart using the ChartType.
    *
    * @param {Object} data - Data from the StatsService update.
    * @param {Object} data.latest - The data from the latest update only.
    * @param {Array<Object>} data.all - All of the data received so far.
    *
-   * @returns {Object} Chart with new data.
+   * @returns {Chart} Chart with new data.
    */
   set chart(data) {
     const {prefix = d => d} = this.format;

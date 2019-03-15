@@ -62,6 +62,7 @@
 // FIXME: chartjs is loaded as a global in index.js as a hack
 import {ChartController} from 'bedrock-web-stats';
 import {BrGaugeChart, BrTimeSeriesChart} from 'bedrock-vue-stats';
+import units from './units';
 
 export default {
   name: 'Home',
@@ -102,7 +103,7 @@ export default {
         format: {
           prefix({latest}) {return latest.monitors.os.mem;},
           last(p) {return p.active / p.total;},
-          max(p) {return Math.ceil(p.total / this.units.gb);}
+          max(p) {return Math.ceil(p.total / units.gb);}
         }}));
     this.$set(this, 'disk', new ChartController(
       {
@@ -110,7 +111,7 @@ export default {
         format: {
           prefix({latest}) {return latest.monitors.os.fsSize[0];},
           last(p) {return p.used / p.size;},
-          max(p) {return Math.ceil(p.size / this.units.gb);}
+          max(p) {return Math.ceil(p.size / units.gb);}
         }}));
     this.$set(this, 'cpuseries', new ChartController(
       {
@@ -125,16 +126,16 @@ export default {
         type: 'realtime',
         format: {
           prefix({latest}) {return latest.monitors.os.mem;},
-          y(p) {return p.active / this.units.gb;},
-          max(p) {return p.total / this.units.gb;}
+          y(p) {return p.active / units.gb;},
+          max(p) {return p.total / units.gb;}
         }}));
     this.$set(this, 'diskseries', new ChartController(
       {
         type: 'realtime',
         format: {
           prefix({latest}) {return latest.monitors.os.fsSize[0];},
-          y(p) {return p.used / this.units.gb;},
-          max(p) {return p.size / this.units.gb;}
+          y(p) {return p.used / units.gb;},
+          max(p) {return p.size / units.gb;}
         }}));
   },
   methods: {

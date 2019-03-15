@@ -8,11 +8,11 @@ import axios from 'axios';
 const headers = {Accept: 'application/ld+json, application/json'};
 
 /**
- * A subscription is an Object with an id and an updater function that is used
- * to make a chart. A ChartController implements both id and updater.
+ * A subscription is an Object with an id and an updater function
+ * (such as ChartController) that is used to format the data for a Chart.
  * @typedef {Object} Subscription
- * @property {String} id - a unique id for the subscription
- * @property {Function} updater - a function called on update
+ * @property {String} id - a unique id for the subscription.
+ * @property {Function} updater - a function called on update.
  */
 
 class StatsService {
@@ -83,7 +83,7 @@ class StatsService {
     this._loading = false;
   }
   /**
-   * This takes in a Subscription used to update a graph.
+   * This takes in a Subscription used to update a chart and adds it to a set.
    *
    * @param {Subscription} update - This can be a ChartController.
    */

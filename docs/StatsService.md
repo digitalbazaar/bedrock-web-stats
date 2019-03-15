@@ -11,8 +11,8 @@
 
 <dl>
 <dt><a href="#Subscription">Subscription</a> : <code>Object</code></dt>
-<dd><p>A subscription is an Object with an id and an updater function that is used
-to make a chart. A ChartController implements both id and updater.</p>
+<dd><p>A subscription is an Object with an id and an updater function
+(such as ChartController) that is used to format the data for a Chart.</p>
 </dd>
 </dl>
 
@@ -75,7 +75,7 @@ It then updates each subscription.
 <a name="StatsService+subscribe"></a>
 
 ### statsService.subscribe(update)
-This takes in a Subscription used to update a graph.
+This takes in a Subscription used to update a chart and adds it to a set.
 
 **Kind**: instance method of [<code>StatsService</code>](#StatsService)  
 
@@ -97,16 +97,16 @@ Each subscription is unique and can be deleted.
 <a name="Subscription"></a>
 
 ## Subscription : <code>Object</code>
-A subscription is an Object with an id and an updater function that is used
-to make a chart. A ChartController implements both id and updater.
+A subscription is an Object with an id and an updater function
+(such as ChartController) that is used to format the data for a Chart.
 
 **Kind**: global typedef  
 **Properties**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| id | <code>String</code> | a unique id for the subscription |
-| updater | <code>function</code> | a function called on update |
+| id | <code>String</code> | a unique id for the subscription. |
+| updater | <code>function</code> | a function called on update. |
 
 
 ---

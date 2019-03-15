@@ -8,7 +8,7 @@ import {StatsService} from 'bedrock-web-stats';
 // TODO: https://www.chartjs.org/docs/latest/charts/
 // implement all chart types
 /**
- * [ChartTypes from Chart.js](https://www.chartjs.org/docs/latest/charts/)
+ * [ChartTypes from Chart.js](https://www.chartjs.org/docs/latest/charts/).
  * @typedef {Object} ChartType
  * @property {string} pie - For Pie charts.
  * @property {string} time - For Static Time Charts.
@@ -23,27 +23,18 @@ const ChartType = {
 };
 
 /**
- * Units such as gigabytes that the stats needed to be formatted in.
- * @typedef ChartUnit
- * @property {number} gb - the number of bytes in a gigabyte.
- */
-const ChartUnit = {
-  gb: Math.pow(2, 30)
-};
-
-/**
- * Receives all the data from each update and get it's ready for the other
- * functions such as x, y, last, and max
+ * Receives all the data from each update and get it ready for the other
+ * functions such as x, y, last, and max.
  * @typedef {Function} Prefix
  * @param {Object} data - Data from the StatsService update.
- * @param {Array} data.latest - The data from the latest update only.
+ * @param {Object} data.latest - The data from the latest update only.
  * @param {Array<Object>} data.all - All of the data received so far.
 */
 
 /**
- * Describes the format of the data
+ * Describes the format of the data.
  * @typedef {Object} Format
- * @property {Prefix} [prefix = ({last}) => last.monitors.os] -
+ * @property {Prefix} [prefix = ({latest, all}) => latest.monitors.os] -
  * Shortens the number of properties needed to get to a value.
  * @property {Function} [y] - Required for time/line charts describes the y.
  * @property {Function} [x = r => r.createdDate] -
@@ -67,7 +58,6 @@ class ChartController {
     }
     this.type = type;
     this.format = format;
-    this.format.units = ChartUnit;
     this._chart = {};
     this._statsService = new StatsService({poll});
     this.id = `${type}-${Date.now()}`;
@@ -79,12 +69,6 @@ class ChartController {
    */
   get chart() {
     return this._chart;
-  }
-  /**
-   * @returns {ChartUnit} Can be used to format data.
-   */
-  get units() {
-    return ChartUnit;
   }
   /**
    * @returns {boolean} Is the chart loading?
@@ -102,7 +86,7 @@ class ChartController {
    * Constructs the chart using the ChartType.
    *
    * @param {Object} data - Data from the StatsService update.
-   * @param {Array} data.latest - The data from the latest update only.
+   * @param {Object} data.latest - The data from the latest update only.
    * @param {Array<Object>} data.all - All of the data received so far.
    *
    * @returns {Object} Chart with new data.
@@ -137,7 +121,7 @@ class ChartController {
    * This function is async because we do not want it blocking.
    *
    * @param {Object} data - Data from the StatsService update.
-   * @param {Array} data.latest - The data from the latest update only.
+   * @param {Object} data.latest - The data from the latest update only.
    * @param {Array<Object>} data.all - All of the data received so far.
    */
   async updater(data) {

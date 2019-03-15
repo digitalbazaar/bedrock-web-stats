@@ -64,6 +64,7 @@ class StatsService {
   }
   /**
    * Is passed to the interval and fires on every poll.
+   * It then updates each subscription.
    */
   async update() {
     this._loading = true;
@@ -74,10 +75,11 @@ class StatsService {
     if(!latest.length) {
       return false;
     }
-    this.results = this.results.concat(latest);
-    const last = latest[latest.length - 1];
-    this.subscribers.forEach(
-      s => s.updater({latest, last, all: this.results}));
+    latest.forEach(latest => {
+      this.results.push(latest);
+      this.subscribers.forEach(
+        s => s.updater({latest, all: this.results}));
+    });
     this._loading = false;
   }
   /**

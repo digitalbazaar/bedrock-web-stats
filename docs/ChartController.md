@@ -82,13 +82,13 @@ Sets the chart using the ChartType.
 | --- | --- | --- |
 | data | <code>Object</code> | Data from the StatsService update. |
 | data.latest | <code>Array</code> | The data from the latest update only. |
-| data.last | <code>Object</code> | The last piece of data from the update. |
 | data.all | <code>Array.&lt;Object&gt;</code> | All of the data received so far. |
 
 <a name="ChartController+updater"></a>
 
 ### chartController.updater(data)
 Called by StatsService on each update.
+This function is async because we do not want it blocking.
 
 **Kind**: instance method of [<code>ChartController</code>](#ChartController)  
 
@@ -96,7 +96,6 @@ Called by StatsService on each update.
 | --- | --- | --- |
 | data | <code>Object</code> | Data from the StatsService update. |
 | data.latest | <code>Array</code> | The data from the latest update only. |
-| data.last | <code>Object</code> | The last piece of data from the update. |
 | data.all | <code>Array.&lt;Object&gt;</code> | All of the data received so far. |
 
 <a name="ChartType"></a>
@@ -138,7 +137,6 @@ functions such as x, y, last, and max
 | --- | --- | --- |
 | data | <code>Object</code> | Data from the StatsService update. |
 | data.latest | <code>Array</code> | The data from the latest update only. |
-| data.last | <code>Object</code> | The last piece of data from the update. |
 | data.all | <code>Array.&lt;Object&gt;</code> | All of the data received so far. |
 
 <a name="Format"></a>

@@ -69,6 +69,7 @@ Gets the last time or returns a time 100000 ms from now.
 
 ### statsService.update()
 Is passed to the interval and fires on every poll.
+It then updates each subscription.
 
 **Kind**: instance method of [<code>StatsService</code>](#StatsService)  
 <a name="StatsService+subscribe"></a>

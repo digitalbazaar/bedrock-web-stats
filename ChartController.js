@@ -32,12 +32,11 @@ const ChartUnit = {
 };
 
 /**
- * Recieves all the data from each update and get it's ready for the other
+ * Receives all the data from each update and get it's ready for the other
  * functions such as x, y, last, and max
  * @typedef {Function} Prefix
  * @param {Object} data - Data from the StatsService update.
  * @param {Array} data.latest - The data from the latest update only.
- * @param {Object} data.last - The last piece of data from the update.
  * @param {Array<Object>} data.all - All of the data received so far.
 */
 
@@ -100,36 +99,31 @@ class ChartController {
     return this._statsService.updating;
   }
   /**
-   * Sets the chart using the ChartType.
+   * Constructs the chart using the ChartType.
    *
    * @param {Object} data - Data from the StatsService update.
    * @param {Array} data.latest - The data from the latest update only.
-   * @param {Object} data.last - The last piece of data from the update.
    * @param {Array<Object>} data.all - All of the data received so far.
    *
    * @returns {Object} Chart with new data.
    */
   set chart(data) {
     const {prefix = d => d} = this.format;
+    const root = prefix(data) || data;
+    this._chart.max = this.format.max(root);
     switch(this.type) {
       case ChartType.pie: {
-        const root = prefix(data) || data;
         this._chart.last = this.format.last(root);
-        this._chart.max = this.format.max(root);
         return this._chart;
       }
       case ChartType.line:
       case ChartType.time:
       case ChartType.realtime: {
-        const root = prefix(data) || data;
-        // this last is truncated from the prefix
-        const last = root[root.length - 1];
-        const {x = (_, i) => data.latest[i].createdDate} = this.format;
-        this._chart.series = root.map(((d, index) => ({
-          x: x(d, index),
-          y: this.format.y(d, index)
-        })));
-        this._chart.max = this.format.max(last);
+        const {x = () => data.latest.createdDate} = this.format;
+        this._chart.series = [{
+          x: x(root),
+          y: this.format.y(root)
+        }];
         return this._chart;
       }
       default: {
@@ -140,13 +134,13 @@ class ChartController {
   }
   /**
    * Called by StatsService on each update.
+   * This function is async because we do not want it blocking.
    *
    * @param {Object} data - Data from the StatsService update.
    * @param {Array} data.latest - The data from the latest update only.
-   * @param {Object} data.last - The last piece of data from the update.
    * @param {Array<Object>} data.all - All of the data received so far.
    */
-  updater(data) {
+  async updater(data) {
     this.chart = data;
   }
 }

@@ -22,7 +22,7 @@ const ChartType = {
 };
 
 /**
- * Receives all the data from each update and get it ready for the other
+ * Receives all the data from each update and prepares it for the other
  * functions such as x, y, last, and max.
  * @typedef {Function} Prefix
  * @param {Object} data - Data from the StatsService update.
@@ -44,7 +44,7 @@ const ChartType = {
  */
 
 /**
- * The result of the updater's data applied to the Format.
+ * The result of the subscription's data applied to the Format.
  * @typedef {Object} Chart
  * @property {Array<Object>} [series] - An array used by line charts.
  * @property {Object} [last] - Used by Pie charts to update their latest value.
@@ -68,8 +68,8 @@ class ChartController {
     this._chart = {};
     this._statsService = new StatsService({poll});
     this.id = `${type}-${Date.now()}`;
-    this.updater = this.updater.bind(this);
-    this._statsService.subscribe(this.updater);
+    this.subscription = this.subscription.bind(this);
+    this._statsService.subscribe(this.subscription);
   }
   /**
    * @returns {boolean} Is the chart loading?
@@ -124,14 +124,15 @@ class ChartController {
     }
   }
   /**
-   * Called by StatsService on each update.
-   * This function is async because we do not want it blocking.
+   * Called by StatsService on each update and should not be awaited.
+   * This method is non-blocking and should resolve with other promises.
+   * This is to ensure that no subscription possibly holds up another update.
    *
    * @param {Object} data - Data from the StatsService update.
    * @param {Object} data.latest - The data from the latest update only.
    * @param {Array<Object>} data.all - All of the data received so far.
    */
-  async updater(data) {
+  async subscription(data) {
     this.chart = data;
   }
 }

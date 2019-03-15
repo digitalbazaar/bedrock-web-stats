@@ -14,14 +14,14 @@
 <dd><p><a href="https://www.chartjs.org/docs/latest/charts/">ChartTypes from Chart.js</a>.</p>
 </dd>
 <dt><a href="#Prefix">Prefix</a> : <code>function</code></dt>
-<dd><p>Receives all the data from each update and get it ready for the other
+<dd><p>Receives all the data from each update and prepares it for the other
 functions such as x, y, last, and max.</p>
 </dd>
 <dt><a href="#Format">Format</a> : <code>Object</code></dt>
 <dd><p>Describes the format of the data.</p>
 </dd>
 <dt><a href="#Chart">Chart</a> : <code>Object</code></dt>
-<dd><p>The result of the updater&#39;s data applied to the Format.</p>
+<dd><p>The result of the subscription&#39;s data applied to the Format.</p>
 </dd>
 </dl>
 
@@ -36,7 +36,7 @@ functions such as x, y, last, and max.</p>
     * [.updating](#ChartController+updating) ⇒ <code>boolean</code>
     * [.chart](#ChartController+chart) ⇒ [<code>Chart</code>](#Chart)
     * [.chart](#ChartController+chart) ⇒ [<code>Chart</code>](#Chart)
-    * [.updater(data)](#ChartController+updater)
+    * [.subscription(data)](#ChartController+subscription)
 
 <a name="new_ChartController_new"></a>
 
@@ -78,11 +78,12 @@ Constructs the chart using the ChartType.
 | data.latest | <code>Object</code> | The data from the latest update only. |
 | data.all | <code>Array.&lt;Object&gt;</code> | All of the data received so far. |
 
-<a name="ChartController+updater"></a>
+<a name="ChartController+subscription"></a>
 
-### chartController.updater(data)
-Called by StatsService on each update.
-This function is async because we do not want it blocking.
+### chartController.subscription(data)
+Called by StatsService on each update and should not be awaited.
+This method is non-blocking and should resolve with other promises.
+This is to ensure that no subscription possibly holds up another update.
 
 **Kind**: instance method of [<code>ChartController</code>](#ChartController)  
 
@@ -114,7 +115,7 @@ This function is async because we do not want it blocking.
 <a name="Prefix"></a>
 
 ## Prefix : <code>function</code>
-Receives all the data from each update and get it ready for the other
+Receives all the data from each update and prepares it for the other
 functions such as x, y, last, and max.
 
 **Kind**: global typedef  
@@ -144,7 +145,7 @@ Describes the format of the data.
 <a name="Chart"></a>
 
 ## Chart : <code>Object</code>
-The result of the updater's data applied to the Format.
+The result of the subscription's data applied to the Format.
 
 **Kind**: global typedef  
 **Properties**

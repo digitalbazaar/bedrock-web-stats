@@ -8,7 +8,7 @@ import axios from 'axios';
 const headers = {Accept: 'application/ld+json, application/json'};
 
 /**
- * A subscription is an async Function (such as ChartController.updater)
+ * A subscription is an async Function (such as ChartController.subscription)
  * that is used to format the data for a Chart.
  * @typedef {Promise} Subscription
  * @param {Object} data - Data from the StatsService update.
@@ -85,7 +85,7 @@ class StatsService {
    * This takes in a Subscription used to update a chart and adds it to a set.
    *
    * @param {Subscription} subscription
-   * - This can be a ChartController's updater function.
+   * - This can be a ChartController's subscription function.
    */
   subscribe(subscription) {
     this.subscribers.add(subscription);
@@ -94,7 +94,7 @@ class StatsService {
    * Each subscription is unique and can be deleted.
    *
    * @param {Subscription} subscription
-   * - This can be a ChartController's updater function.
+   * - This can be a ChartController's subscription function.
    */
   unsubscribe(subscription) {
     this.subscribers = this.subscribers.delete(subscription);

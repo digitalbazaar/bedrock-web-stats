@@ -11,7 +11,7 @@
 
 <dl>
 <dt><a href="#Subscription">Subscription</a> : <code>Promise</code></dt>
-<dd><p>A subscription is an async Function (such as ChartController.updater)
+<dd><p>A subscription is an async Function (such as ChartController.subscription)
 that is used to format the data for a Chart.</p>
 </dd>
 </dl>
@@ -80,7 +80,7 @@ This takes in a Subscription used to update a chart and adds it to a set.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| subscription | [<code>Subscription</code>](#Subscription) | - This can be a ChartController's updater function. |
+| subscription | [<code>Subscription</code>](#Subscription) | - This can be a ChartController's subscription function. |
 
 <a name="StatsService+unsubscribe"></a>
 
@@ -91,12 +91,12 @@ Each subscription is unique and can be deleted.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| subscription | [<code>Subscription</code>](#Subscription) | - This can be a ChartController's updater function. |
+| subscription | [<code>Subscription</code>](#Subscription) | - This can be a ChartController's subscription function. |
 
 <a name="Subscription"></a>
 
 ## Subscription : <code>Promise</code>
-A subscription is an async Function (such as ChartController.updater)
+A subscription is an async Function (such as ChartController.subscription)
 that is used to format the data for a Chart.
 
 **Kind**: global typedef  

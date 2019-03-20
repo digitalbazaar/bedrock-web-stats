@@ -3,6 +3,6 @@ module.exports = {
     browser: true
   },
   plugins: ['jsdoc'],
-  extends: 'eslint-config-digitalbazaar',
+  extends: 'eslint-config-digitalbazaar/jsdoc',
 };
 

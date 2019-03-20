@@ -1,20 +1,56 @@
 <template>
   <q-page
+    v-if="!loading"
     class="column gutter-md background"
     padding>
-    <div class="column items-center">
-      <q-btn
-        id="submit-btn"
-        color="faded"
-        @click="getStats">
-        Get Stats
-      </q-btn>
+    <div class="row">
+      <span class="col-4">
+        <br-gauge-chart
+          title="CPU"
+          :color="colors().cpu"
+          :max="cpu.chart.max"
+          unit="CPUS"
+          :last="cpu.chart.last" />
+      </span>
+      <span class="col-4">
+        <br-gauge-chart
+          title="RAM"
+          :color="colors().ram"
+          :max="ram.chart.max"
+          :last="ram.chart.last" />
+      </span>
+      <span class="col-4">
+        <br-gauge-chart
+          title="Disk Space"
+          :color="colors().disk"
+          :max="disk.chart.max"
+          :last="disk.chart.last" />
+      </span>
     </div>
-    <div>
-      <pre>
-        {{reports}}
-      </pre>
-    </div>
+    <br-time-series-chart
+      id="load-avg"
+      :line="colors().line"
+      :fill="colors(0.8).cpu"
+      :max="cpuseries.chart.max"
+      :series="cpuseries.chart.series"
+      realtime
+      label="CPU Usage" />
+    <br-time-series-chart
+      id="mem-used"
+      :line="colors().line"
+      :fill="colors(0.8).ram"
+      :max="ramseries.chart.max"
+      :series="ramseries.chart.series"
+      realtime
+      label="RAM Usage GB" />
+    <br-time-series-chart
+      id="fs-used"
+      :line="colors().line"
+      :fill="colors(0.8).disk"
+      :max="diskseries.chart.max"
+      :series="diskseries.chart.series"
+      realtime
+      label="Disk Space in GB" />
   </q-page>
 </template>
 <script>
@@ -23,34 +59,105 @@
  */
 'use strict';
 
-import {StatsService} from 'bedrock-web-stats';
+// FIXME: chartjs is loaded as a global in index.js as a hack
+import {statsService, ChartController} from 'bedrock-web-stats';
+import {BrGaugeChart, BrTimeSeriesChart} from 'bedrock-vue-stats';
+import units from './units';
 
 export default {
   name: 'Home',
-  components: {},
+  components: {BrGaugeChart, BrTimeSeriesChart},
   data() {
     return {
-      reports: []
+      charts: {last: {}},
+      statsService: null,
+      cpu: null,
+      ram: null,
+      disk: null,
+      cpuseries: null,
+      ramseries: null,
+      diskseries: null
+
     };
   },
-  beforeCreate() {
-    this._statsService = new StatsService();
+  computed: {
+    loading() {
+      if(!this.cpu) {
+        return true;
+      }
+      return this.cpu.loading;
+    }
+  },
+  mounted() {
+    this.$set(this, 'cpu', new ChartController(
+      {
+        type: 'pie',
+        statsService,
+        format: {
+          prepare({latest}) {return latest.monitors.os.currentLoad;},
+          last(p) {return p.avgload;},
+          max(p) {return p.cpus.length;}
+        }}));
+    this.$set(this, 'ram', new ChartController(
+      {
+        type: 'pie',
+        statsService,
+        format: {
+          prepare({latest}) {return latest.monitors.os.mem;},
+          last(p) {return p.active / p.total;},
+          max(p) {return Math.ceil(p.total / units.gb);}
+        }}));
+    this.$set(this, 'disk', new ChartController(
+      {
+        type: 'pie',
+        statsService,
+        format: {
+          prepare({latest}) {return latest.monitors.os.fsSize[0];},
+          last(p) {return p.used / p.size;},
+          max(p) {return Math.ceil(p.size / units.gb);}
+        }}));
+    this.$set(this, 'cpuseries', new ChartController(
+      {
+        type: 'realtime',
+        statsService,
+        format: {
+          prepare({latest}) {return latest.monitors.os.currentLoad;},
+          y(p) {return p.avgload * p.cpus.length;},
+          max(p) {return p.cpus.length;}
+        }}));
+    this.$set(this, 'ramseries', new ChartController(
+      {
+        type: 'realtime',
+        statsService,
+        format: {
+          prepare({latest}) {return latest.monitors.os.mem;},
+          y(p) {return p.active / units.gb;},
+          max(p) {return p.total / units.gb;}
+        }}));
+    this.$set(this, 'diskseries', new ChartController(
+      {
+        type: 'realtime',
+        statsService,
+        format: {
+          prepare({latest}) {return latest.monitors.os.fsSize[0];},
+          y(p) {return p.used / units.gb;},
+          max(p) {return p.size / units.gb;}
+        }}));
   },
   methods: {
-    async getStats() {
-      const result = await this._statsService.get({
-        // specify which monitors to pull
-        monitorIds: ['os'],
-        // get stats from the last 5 seconds
-        startDate: Date.now() - 5000
-      });
-      this.reports = result;
-    },
-    done() {
-      console.log('Done!', this.form);
+    colors(alpha = 1) {
+      return {
+        ram: `rgba(0, 0, 184, ${alpha})`,
+        cpu: `rgba(100, 199, 85, ${alpha})`,
+        disk: `rgba(200, 44, 146, ${alpha})`,
+        line: `rgba(100,100,100, ${alpha})`
+      };
     }
   }
 };
 </script>
 <style>
+main.background {
+  background-color: 'black';
+}
 </style>

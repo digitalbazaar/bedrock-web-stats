@@ -3,6 +3,7 @@
   "version": "0.0.1-0",
   "private": true,
   "main": "index.js",
+  "less": "app.less",
   "scripts": {
     "start": "redis-cli flushall && node --preserve-symlinks test.js",
     "test": "redis-cli flushall && node --preserve-symlinks test.js test --framework karma",
@@ -32,6 +33,7 @@
     "bedrock-validation": "^4.1.0",
     "bedrock-views": "^6.0.0",
     "bedrock-vue": "^1.0.0",
+    "bedrock-vue-stats": "github:digitalbazaar/bedrock-vue-stats#initial",
     "bedrock-web": "^1.0.0",
     "bedrock-web-stats": "file:..",
     "bedrock-webpack": "^2.0.0",

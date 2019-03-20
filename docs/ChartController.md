@@ -13,7 +13,7 @@
 <dt><a href="#ChartType">ChartType</a> : <code>Object</code></dt>
 <dd><p><a href="https://www.chartjs.org/docs/latest/charts/">ChartTypes from Chart.js</a>.</p>
 </dd>
-<dt><a href="#Prefix">Prefix</a> : <code>function</code></dt>
+<dt><a href="#Prepare">Prepare</a> : <code>function</code></dt>
 <dd><p>Receives all the data from each update and prepares it for the other
 functions such as x, y, last, and max.</p>
 </dd>
@@ -47,7 +47,7 @@ functions such as x, y, last, and max.</p>
 | options | <code>Object</code> |  | Options for the chart. |
 | [options.type] | [<code>ChartType</code>](#ChartType) | <code>&#x27;pie&#x27;</code> | Chart type. |
 | options.format | [<code>Format</code>](#Format) |  | The format for the chart. |
-| [options.poll] | <code>number</code> | <code>2000</code> | How often StatsService will poll. |
+| options.statsService | <code>StatsService</code> |  | A stats service that can poll the api. |
 
 <a name="ChartController+loading"></a>
 
@@ -112,9 +112,9 @@ This is to ensure that no subscription possibly holds up another update.
 | line | <code>string</code> | For Static Line Charts. |
 | realtime | <code>string</code> | For realtime Charts. |
 
-<a name="Prefix"></a>
+<a name="Prepare"></a>
 
-## Prefix : <code>function</code>
+## Prepare : <code>function</code>
 Receives all the data from each update and prepares it for the other
 functions such as x, y, last, and max.
 
@@ -136,7 +136,7 @@ Describes the format of the data.
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| [prefix] | [<code>Prefix</code>](#Prefix) | <code>({latest, all}) &#x3D;&gt; latest.monitors.os</code> | Shortens the number of properties needed to get to a value. |
+| [prepare] | [<code>Prepare</code>](#Prepare) | <code>({latest, all}) &#x3D;&gt; latest.monitors.os</code> | Prepares the data for the other functions. |
 | [y] | <code>function</code> |  | Required for time/line charts describes the y. |
 | [x] | <code>function</code> | <code>r &#x3D;&gt; r.createdDate</code> | Optional function that gets the x value for line charts. |
 | [last] | <code>function</code> |  | Pie Charts use this to calculate the last value. |

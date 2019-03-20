@@ -60,7 +60,7 @@
 'use strict';
 
 // FIXME: chartjs is loaded as a global in index.js as a hack
-import {ChartController} from 'bedrock-web-stats';
+import {statsService, ChartController} from 'bedrock-web-stats';
 import {BrGaugeChart, BrTimeSeriesChart} from 'bedrock-vue-stats';
 import units from './units';
 
@@ -92,48 +92,54 @@ export default {
     this.$set(this, 'cpu', new ChartController(
       {
         type: 'pie',
+        statsService,
         format: {
-          prefix({latest}) {return latest.monitors.os.currentLoad;},
+          prepare({latest}) {return latest.monitors.os.currentLoad;},
           last(p) {return p.avgload;},
           max(p) {return p.cpus.length;}
         }}));
     this.$set(this, 'ram', new ChartController(
       {
         type: 'pie',
+        statsService,
         format: {
-          prefix({latest}) {return latest.monitors.os.mem;},
+          prepare({latest}) {return latest.monitors.os.mem;},
           last(p) {return p.active / p.total;},
           max(p) {return Math.ceil(p.total / units.gb);}
         }}));
     this.$set(this, 'disk', new ChartController(
       {
         type: 'pie',
+        statsService,
         format: {
-          prefix({latest}) {return latest.monitors.os.fsSize[0];},
+          prepare({latest}) {return latest.monitors.os.fsSize[0];},
           last(p) {return p.used / p.size;},
           max(p) {return Math.ceil(p.size / units.gb);}
         }}));
     this.$set(this, 'cpuseries', new ChartController(
       {
         type: 'realtime',
+        statsService,
         format: {
-          prefix({latest}) {return latest.monitors.os.currentLoad;},
+          prepare({latest}) {return latest.monitors.os.currentLoad;},
           y(p) {return p.avgload * p.cpus.length;},
           max(p) {return p.cpus.length;}
         }}));
     this.$set(this, 'ramseries', new ChartController(
       {
         type: 'realtime',
+        statsService,
         format: {
-          prefix({latest}) {return latest.monitors.os.mem;},
+          prepare({latest}) {return latest.monitors.os.mem;},
           y(p) {return p.active / units.gb;},
           max(p) {return p.total / units.gb;}
         }}));
     this.$set(this, 'diskseries', new ChartController(
       {
         type: 'realtime',
+        statsService,
         format: {
-          prefix({latest}) {return latest.monitors.os.fsSize[0];},
+          prepare({latest}) {return latest.monitors.os.fsSize[0];},
           y(p) {return p.used / units.gb;},
           max(p) {return p.size / units.gb;}
         }}));

@@ -16,9 +16,6 @@ const headers = {Accept: 'application/ld+json, application/json'};
  * @param {Array<Object>} data.all - All of the data received so far.
  */
 
-// instance stores the singleton
-let instance = null;
-
 class StatsService {
   /**
    * Stats Service is a singleton.
@@ -31,19 +28,12 @@ class StatsService {
    * @returns {StatsService} Either an existing one or a new one.
    */
   constructor({poll = 1000} = {}) {
-    if(instance) {
-      return instance;
-    }
     this.update = this.update.bind(this);
     this._loading = true;
     this.poll = poll;
     this.subscribers = new Set();
     this.results = [];
-    if(!this.intervalId) {
-      this.intervalId = setInterval(this.update, this.poll);
-    }
-    instance = this;
-    return instance;
+    this.start();
   }
   /**
    * Determines if this is the first load.
@@ -118,6 +108,26 @@ class StatsService {
       return Date.now() - 100000;
     }
     return this.results[this.results.length - 1].createdDate;
+  }
+  /**
+   * Stops polling the api.
+   */
+  stop() {
+    clearInterval(this.intervalId);
+    this.intervalId = null;
+  }
+  /**
+   * Starts polling the api.
+   *
+   * @param {number} poll - How many milliseconds for each api request.
+   */
+  start(poll) {
+    if(poll) {
+      this.poll = poll;
+    }
+    if(!this.intervalId) {
+      this.intervalId = setInterval(this.update, this.poll);
+    }
   }
 }
 

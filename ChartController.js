@@ -3,8 +3,6 @@
  */
 'use strict';
 
-import {StatsService} from 'bedrock-web-stats';
-
 /**
  * [ChartTypes from Chart.js](https://www.chartjs.org/docs/latest/charts/).
  * @typedef {Object} ChartType
@@ -24,7 +22,7 @@ const ChartType = {
 /**
  * Receives all the data from each update and prepares it for the other
  * functions such as x, y, last, and max.
- * @typedef {Function} Prefix
+ * @typedef {Function} Prepare
  * @param {Object} data - Data from the StatsService update.
  * @param {Object} data.latest - The data from the latest update only.
  * @param {Array<Object>} data.all - All of the data received so far.
@@ -33,8 +31,8 @@ const ChartType = {
 /**
  * Describes the format of the data.
  * @typedef {Object} Format
- * @property {Prefix} [prefix = ({latest, all}) => latest.monitors.os] -
- * Shortens the number of properties needed to get to a value.
+ * @property {Prepare} [prepare = ({latest, all}) => latest.monitors.os] -
+ * Prepares the data for the other functions.
  * @property {Function} [y] - Required for time/line charts describes the y.
  * @property {Function} [x = r => r.createdDate] -
  * Optional function that gets the x value for line charts.
@@ -56,9 +54,10 @@ class ChartController {
    * @param {Object} options - Options for the chart.
    * @param {ChartType} [options.type = 'pie'] - Chart type.
    * @param {Format} options.format - The format for the chart.
-   * @param {number} [options.poll = 2000] - How often StatsService will poll.
+   * @param {StatsService} options.statsService
+   * A stats service that can poll the api.
    */
-  constructor({type = 'pie', format, poll = 2000}) {
+  constructor({type = 'pie', format, statsService}) {
     const chartType = ChartType[type];
     if(!chartType) {
       throw new Error(`${type} Charts are unsupported`);
@@ -66,7 +65,7 @@ class ChartController {
     this.type = type;
     this.format = format;
     this._chart = {};
-    this._statsService = new StatsService({poll});
+    this._statsService = statsService;
     this.id = `${type}-${Date.now()}`;
     this.subscription = this.subscription.bind(this);
     this._statsService.subscribe(this.subscription);
@@ -99,8 +98,8 @@ class ChartController {
    * @returns {Chart} Chart with new data.
    */
   set chart(data) {
-    const {prefix = d => d} = this.format;
-    const root = prefix(data) || data;
+    const {prepare = d => d} = this.format;
+    const root = prepare(data) || data;
     this._chart.max = this.format.max(root);
     switch(this.type) {
       case ChartType.pie: {

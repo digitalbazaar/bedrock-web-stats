@@ -29,6 +29,8 @@ that is used to format the data for a Chart.</p>
     * [.update()](#StatsService+update)
     * [.subscribe(subscription)](#StatsService+subscribe)
     * [.unsubscribe(subscription)](#StatsService+unsubscribe)
+    * [.stop()](#StatsService+stop)
+    * [.start(poll)](#StatsService+start)
 
 <a name="new_StatsService_new"></a>
 
@@ -92,6 +94,23 @@ Each subscription is unique and can be deleted.
 | Param | Type | Description |
 | --- | --- | --- |
 | subscription | [<code>Subscription</code>](#Subscription) | - This can be a ChartController's subscription function. |
+
+<a name="StatsService+stop"></a>
+
+### statsService.stop()
+Stops polling the api.
+
+**Kind**: instance method of [<code>StatsService</code>](#StatsService)  
+<a name="StatsService+start"></a>
+
+### statsService.start(poll)
+Starts polling the api.
+
+**Kind**: instance method of [<code>StatsService</code>](#StatsService)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| poll | <code>number</code> | How many milliseconds for each api request. |
 
 <a name="Subscription"></a>
 

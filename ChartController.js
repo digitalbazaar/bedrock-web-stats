@@ -68,7 +68,7 @@ class ChartController {
     this._statsService = statsService;
     this.id = `${type}-${Date.now()}`;
     this.subscription = this.subscription.bind(this);
-    this._statsService.subscribe(this.subscription);
+    this.subscribe();
   }
   /**
    * @returns {boolean} Is the chart loading?
@@ -133,6 +133,18 @@ class ChartController {
    */
   async subscription(data) {
     this.chart = data;
+  }
+  /**
+   * Unsubscribes the chart from the statService.
+   */
+  unsubscribe() {
+    this._statsService.unsubscribe(this.subscription);
+  }
+  /**
+   * Subscribes the chart from the statService.
+   */
+  subscribe() {
+    this._statsService.subscribe(this.subscription);
   }
 }
 export {ChartController};

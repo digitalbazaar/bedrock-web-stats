@@ -3,6 +3,14 @@
     v-if="!loading"
     class="column gutter-md background"
     padding>
+    <q-btn
+      @click="unsubscribe">
+      Unsubscribe
+    </q-btn>
+    <q-btn
+      @click="subscribe">
+      Subscribe
+    </q-btn>
     <div class="row">
       <span class="col-4">
         <br-gauge-chart
@@ -85,10 +93,14 @@ export default {
       if(!this.cpu) {
         return true;
       }
+      if(!this.cpu.loading) {
+        this.$q.loading.hide();
+      }
       return this.cpu.loading;
     }
   },
   mounted() {
+    this.$q.loading.show();
     this.$set(this, 'cpu', new ChartController(
       {
         type: 'pie',
@@ -145,6 +157,22 @@ export default {
         }}));
   },
   methods: {
+    unsubscribe() {
+      this.diskseries.unsubscribe();
+      this.ramseries.unsubscribe();
+      this.cpuseries.unsubscribe();
+      this.disk.unsubscribe();
+      this.ram.unsubscribe();
+      this.cpu.unsubscribe();
+    },
+    subscribe() {
+      this.diskseries.subscribe();
+      this.ramseries.subscribe();
+      this.cpuseries.subscribe();
+      this.disk.subscribe();
+      this.ram.subscribe();
+      this.cpu.subscribe();
+    },
     colors(alpha = 1) {
       return {
         ram: `rgba(0, 0, 184, ${alpha})`,

@@ -33,7 +33,6 @@ class StatsService {
     this.poll = poll;
     this.subscribers = new Set();
     this.results = [];
-    this.start();
   }
   /**
    * Determines if this is the first load.
@@ -79,15 +78,20 @@ class StatsService {
    */
   subscribe(subscription) {
     this.subscribers.add(subscription);
+    this.start();
   }
   /**
    * Each subscription is unique and can be deleted.
+   * If there are no subscriptions stop polling the api.
    *
    * @param {Subscription} subscription
    * - This can be a ChartController's subscription function.
    */
   unsubscribe(subscription) {
-    this.subscribers = this.subscribers.delete(subscription);
+    this.subscribers.delete(subscription);
+    if(this.subscribers.size === 0) {
+      this.stop();
+    }
   }
   /*
    * gets the actual data from the stats rest api

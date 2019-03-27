@@ -89,7 +89,7 @@ class StatsService {
    */
   unsubscribe(subscription) {
     this.subscribers.delete(subscription);
-    if(!this.subscribers.size) {
+    if(this.subscribers.size === 0) {
       this.stop();
     }
   }

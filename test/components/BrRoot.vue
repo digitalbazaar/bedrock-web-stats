@@ -1,18 +1,16 @@
 <template>
   <q-layout>
-    <q-layout-header>
+    <q-header>
       <q-toolbar>
         <q-toolbar-title>
           Bedrock Stats Test
         </q-toolbar-title>
       </q-toolbar>
-    </q-layout-header>
-
+    </q-header>
     <q-page-container>
       <router-view />
     </q-page-container>
-
-    <q-layout-footer />
+    <q-footer />
   </q-layout>
 </template>
 <script>
